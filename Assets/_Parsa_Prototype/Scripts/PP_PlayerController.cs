@@ -24,8 +24,10 @@ namespace ParsaProto
         [Range(0f, 1f)] public float airControl = 0.65f;
 
         [Header("Jump")]
-        [Tooltip("Peak jump height in world units.")]
-        public float jumpHeight = 3.2f;
+        [Tooltip("How many blocks (tiles) high the jump reaches. 1 block = 1 world unit.")]
+        public int jumpHeightBlocks = 3;
+        [Tooltip("Extra height above the blocks so the jump clears the ledge instead of grazing it.")]
+        public float jumpClearance = 0.35f;
         [Tooltip("Gravity while rising.")]
         public float gravityUp = 45f;
         [Tooltip("Gravity while falling (higher = snappier).")]
@@ -43,7 +45,7 @@ namespace ParsaProto
 
         [Header("Ground Check")]
         [Tooltip("Probe box under the feet.")]
-        public Vector2 groundCheckSize = new Vector2(0.8f, 0.12f);
+        public Vector2 groundCheckSize = new Vector2(0.6f, 0.12f);
         [Tooltip("How far below the collider to probe.")]
         public float groundCheckDistance = 0.06f;
         public LayerMask groundLayers = ~0;
@@ -117,8 +119,10 @@ namespace ParsaProto
         {
             if (_jumpBufferCounter > 0f && _coyoteCounter > 0f)
             {
-                // v = sqrt(2 * g * h) using the rising gravity
-                float jumpVelocity = Mathf.Sqrt(2f * gravityUp * jumpHeight);
+                // v = sqrt(2 * g * h) using the rising gravity;
+                // h = blocks + clearance so an N-block ledge is actually reachable
+                float h = jumpHeightBlocks + jumpClearance;
+                float jumpVelocity = Mathf.Sqrt(2f * gravityUp * h);
                 Vector2 v = _rb.linearVelocity;
                 v.y = jumpVelocity;
                 _rb.linearVelocity = v;
