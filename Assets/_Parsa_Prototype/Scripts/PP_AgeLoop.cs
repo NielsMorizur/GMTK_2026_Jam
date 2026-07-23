@@ -34,9 +34,6 @@ namespace ParsaProto
         [Tooltip("Optional world-space label showing form + countdown.")]
         public TextMesh label;
 
-        [Tooltip("Countdown speed multiplier while the fast-forward key (E) is held.")]
-        public float fastForwardMultiplier = 2f;
-
         PP_PlayerController _controller;
         SpriteRenderer _sprite;
         Rigidbody2D _rb;
@@ -74,9 +71,10 @@ namespace ParsaProto
                 return;
             }
 
-            bool fast = kb != null && kb.eKey.isPressed;
-            _timer -= Time.deltaTime * (fast ? fastForwardMultiplier : 1f);
-            if (_timer <= 0f)
+            bool ageDownPressed = kb != null && kb.eKey.wasPressedThisFrame;
+
+            _timer -= Time.deltaTime;
+            if (_timer <= 0f || ageDownPressed)
             {
                 if (_formIndex + 1 < forms.Length)
                     ApplyForm(_formIndex + 1);   // age down
@@ -85,7 +83,7 @@ namespace ParsaProto
             }
 
             if (label != null && CurrentForm != null)
-                label.text = $"{CurrentForm.formName}  {Mathf.CeilToInt(Mathf.Max(_timer, 0f))}{(fast ? " >>" : "")}";
+                label.text = $"{CurrentForm.formName}  {Mathf.CeilToInt(Mathf.Max(_timer, 0f))}";
         }
 
         void ApplyForm(int index)
