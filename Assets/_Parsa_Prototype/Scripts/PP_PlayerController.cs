@@ -24,8 +24,10 @@ namespace ParsaProto
         [Range(0f, 1f)] public float airControl = 0.65f;
 
         [Header("Jump")]
-        [Tooltip("Peak jump height in world units.")]
-        public float jumpHeight = 3.2f;
+        [Tooltip("How many blocks (tiles) high the jump reaches. 1 block = 1 world unit.")]
+        public int jumpHeightBlocks = 3;
+        [Tooltip("Extra height above the blocks so the jump clears the ledge instead of grazing it.")]
+        public float jumpClearance = 0.35f;
         [Tooltip("Gravity while rising.")]
         public float gravityUp = 45f;
         [Tooltip("Gravity while falling (higher = snappier).")]
@@ -41,9 +43,19 @@ namespace ParsaProto
         [Tooltip("Window to buffer a jump pressed just before landing.")]
         public float jumpBufferTime = 0.10f;
 
+        [Header("Dash")]
+        [Tooltip("Enabled per form by PP_AgeLoop (teen only).")]
+        public bool dashEnabled = false;
+        [Tooltip("Dash speed, units/sec.")]
+        public float dashSpeed = 18f;
+        [Tooltip("How long the dash lasts.")]
+        public float dashDuration = 0.15f;
+        [Tooltip("Delay before you can dash again.")]
+        public float dashCooldown = 0.35f;
+
         [Header("Ground Check")]
         [Tooltip("Probe box under the feet.")]
-        public Vector2 groundCheckSize = new Vector2(0.8f, 0.12f);
+        public Vector2 groundCheckSize = new Vector2(0.6f, 0.12f);
         [Tooltip("How far below the collider to probe.")]
         public float groundCheckDistance = 0.06f;
         public LayerMask groundLayers = ~0;
@@ -56,6 +68,14 @@ namespace ParsaProto
 
         float _coyoteCounter;
         float _jumpBufferCounter;
+        float _dashTimer;
+        float _dashCooldownTimer;
+        bool _dashQueued;
+        bool _dashUsedInAir;
+        int _facing = 1;
+
+        public int Facing => _facing;
+        public float MoveInput => _moveInput;
         bool _isGrounded;
         bool _jumping;
 
@@ -85,6 +105,11 @@ namespace ParsaProto
             _jumpHeld = kb.spaceKey.isPressed || kb.wKey.isPressed || kb.upArrowKey.isPressed;
 
             if (jumpPressed) _jumpBufferCounter = jumpBufferTime;
+
+            if (_moveInput > 0.01f) _facing = 1;
+            else if (_moveInput < -0.01f) _facing = -1;
+
+            if (kb.leftShiftKey.wasPressedThisFrame) _dashQueued = true;
         }
 
         void FixedUpdate()
@@ -96,6 +121,30 @@ namespace ParsaProto
             // timers
             _coyoteCounter = _isGrounded ? coyoteTime : _coyoteCounter - dt;
             _jumpBufferCounter -= dt;
+            _dashCooldownTimer -= dt;
+            if (_isGrounded) _dashUsedInAir = false;
+
+            // dash overrides everything while active
+            if (_dashTimer > 0f)
+            {
+                _dashTimer -= dt;
+                _rb.linearVelocity = new Vector2(_facing * dashSpeed, 0f);
+                _dashQueued = false;
+                return;
+            }
+
+            if (_dashQueued)
+            {
+                _dashQueued = false;
+                if (dashEnabled && _dashCooldownTimer <= 0f && (_isGrounded || !_dashUsedInAir))
+                {
+                    _dashTimer = dashDuration;
+                    _dashCooldownTimer = dashDuration + dashCooldown;
+                    if (!_isGrounded) _dashUsedInAir = true;
+                    _rb.linearVelocity = new Vector2(_facing * dashSpeed, 0f);
+                    return;
+                }
+            }
 
             HandleHorizontal(dt);
             HandleJump();
@@ -117,8 +166,10 @@ namespace ParsaProto
         {
             if (_jumpBufferCounter > 0f && _coyoteCounter > 0f)
             {
-                // v = sqrt(2 * g * h) using the rising gravity
-                float jumpVelocity = Mathf.Sqrt(2f * gravityUp * jumpHeight);
+                // v = sqrt(2 * g * h) using the rising gravity;
+                // h = blocks + clearance so an N-block ledge is actually reachable
+                float h = jumpHeightBlocks + jumpClearance;
+                float jumpVelocity = Mathf.Sqrt(2f * gravityUp * h);
                 Vector2 v = _rb.linearVelocity;
                 v.y = jumpVelocity;
                 _rb.linearVelocity = v;
