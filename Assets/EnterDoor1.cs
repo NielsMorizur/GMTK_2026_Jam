@@ -32,7 +32,7 @@ public class EnterDoor1 : MonoBehaviour
 
     void Update()
     {
-        if (playerInRange && player.input.Player.Interact.WasPerformedThisFrame() && gm.LevelsCompleted == 0)
+        if (playerInRange && player.input.Player.Interact.WasPerformedThisFrame() && gm.GetLevel() == levelToLoad)
         {
             SceneManager.LoadScene(levelToLoad);
         }

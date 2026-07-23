@@ -4,7 +4,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public int LevelsCompleted = 0;
+    [SerializeField] private string[] levelSequence = {"Level1", "Level2", "Level3", "Level4", "End"};
+    [SerializeField] private int currentLevelIndex = 0;
 
     void Awake()
     {
@@ -21,5 +22,15 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void LevelComplete()
+    {
+        currentLevelIndex++;
+    }
+
+    public string GetLevel()
+    {
+        return levelSequence[currentLevelIndex];
     }
 }
