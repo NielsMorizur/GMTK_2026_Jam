@@ -23,6 +23,10 @@ namespace ParsaProto
             public int jumpHeightBlocks = 3;
             [Tooltip("Signature ability: dash (teen).")]
             public bool canDash = false;
+            [Tooltip("Signature ability: fart jump / mid-air boost (old man).")]
+            public bool canAirJump = false;
+            [Tooltip("Signature ability: grappling gun (adult).")]
+            public bool canGrapple = false;
         }
 
         [Tooltip("Aging order: index 0 is what you respawn as.")]
@@ -34,10 +38,32 @@ namespace ParsaProto
         [Tooltip("Optional world-space label showing form + countdown.")]
         public TextMesh label;
 
+        [Tooltip("Falling below this y returns the player to the level spawn.")]
+        public float fallKillY = -20f;
+
         PP_PlayerController _controller;
+        PP_Grapple _grapple;
         SpriteRenderer _sprite;
         Rigidbody2D _rb;
         Vector3 _spawnPoint;
+
+        /// <summary>Forms available this level (set by PP_LevelManager). 0 = all.</summary>
+        [System.NonSerialized] public int activeFormCount;
+
+        /// <summary>True in the hub: no countdown, no aging.</summary>
+        [System.NonSerialized] public bool timerPaused;
+
+        /// <summary>Playground mode: no countdown, E cycles all forms freely.</summary>
+        [System.NonSerialized] public bool freeCycle;
+
+        /// <summary>Ready gate: level is armed but waits for Space.</summary>
+        [System.NonSerialized] public bool waitingToStart;
+
+        bool _startRequested;
+
+        int MaxForms => activeFormCount > 0
+            ? Mathf.Min(activeFormCount, forms.Length)
+            : forms.Length;
 
         int _formIndex;
         float _timer;
@@ -49,6 +75,7 @@ namespace ParsaProto
         void Awake()
         {
             _controller = GetComponent<PP_PlayerController>();
+            _grapple = GetComponent<PP_Grapple>();
             _sprite = GetComponent<SpriteRenderer>();
             _rb = GetComponent<Rigidbody2D>();
             _spawnPoint = transform.position;
@@ -59,11 +86,29 @@ namespace ParsaProto
             ApplyForm(0);
         }
 
+        /// <summary>PP_LevelManager points this at the current level's spawn.</summary>
+        public void SetSpawn(Vector3 p)
+        {
+            _spawnPoint = p;
+        }
+
         void Update()
         {
             if (forms == null || forms.Length == 0) return;
 
+            if (transform.position.y < fallKillY)
+                RestartLevel();                       // pit fall = death
+
             var kb = Keyboard.current;
+
+            if (waitingToStart)
+            {
+                if (kb != null && kb.spaceKey.wasPressedThisFrame)
+                    _startRequested = true;
+                if (label != null && CurrentForm != null)
+                    label.text = CurrentForm.formName + "  - press Space";
+                return;
+            }
 
             if (kb != null && kb.rKey.wasPressedThisFrame)
             {
@@ -71,19 +116,47 @@ namespace ParsaProto
                 return;
             }
 
-            bool ageDownPressed = kb != null && kb.eKey.wasPressedThisFrame;
-
-            _timer -= Time.deltaTime;
-            if (_timer <= 0f || ageDownPressed)
+            if (freeCycle)
             {
-                if (_formIndex + 1 < forms.Length)
-                    ApplyForm(_formIndex + 1);   // age down
-                else
-                    Respawn();                   // baby's time ran out: die, loop
+                if (kb != null && kb.eKey.wasPressedThisFrame)
+                    ApplyForm((_formIndex + 1) % forms.Length);
+                if (label != null && CurrentForm != null)
+                    label.text = CurrentForm.formName;
+                return;
+            }
+
+            if (!timerPaused)
+            {
+                bool ageDownPressed = kb != null && kb.eKey.wasPressedThisFrame
+                                      && _formIndex + 1 < MaxForms;   // E does nothing on the final form
+
+                _timer -= Time.deltaTime;
+                if (_timer <= 0f || ageDownPressed)
+                {
+                    if (_formIndex + 1 < MaxForms)
+                        ApplyForm(_formIndex + 1);   // age down
+                    else
+                        RestartLevel();              // last allowed form expired: die, level resets
+                }
             }
 
             if (label != null && CurrentForm != null)
-                label.text = $"{CurrentForm.formName}  {Mathf.CeilToInt(Mathf.Max(_timer, 0f))}";
+                label.text = timerPaused
+                    ? CurrentForm.formName
+                    : $"{CurrentForm.formName}  {Mathf.CeilToInt(Mathf.Max(_timer, 0f))}";
+        }
+
+        void LateUpdate()
+        {
+            // unlock AFTER every Update ran this frame, so the starting Space
+            // press can never double as a buffered jump
+            if (_startRequested)
+            {
+                _startRequested = false;
+                waitingToStart = false;
+                _controller.inputLocked = false;
+                _timer = formDuration;    // countdown starts NOW, not at level entry
+            }
         }
 
         void ApplyForm(int index)
@@ -97,6 +170,12 @@ namespace ParsaProto
             _controller.moveSpeed = f.moveSpeed;
             _controller.jumpHeightBlocks = f.jumpHeightBlocks;
             _controller.dashEnabled = f.canDash;
+            _controller.airJumpEnabled = f.canAirJump;
+            if (_grapple != null)
+            {
+                _grapple.grappleEnabled = f.canGrapple;
+                if (!f.canGrapple) _grapple.ForceRelease();
+            }
 
             // keep the label readable: cancel the parent's scale and sit above the head
             if (label != null)
@@ -104,12 +183,6 @@ namespace ParsaProto
                 label.transform.localScale = new Vector3(1f / f.scale.x, 1f / f.scale.y, 1f);
                 label.transform.localPosition = new Vector3(0f, 0.5f + 0.9f / f.scale.y, 0f);
             }
-        }
-
-        void Respawn()
-        {
-            ReturnToStart();
-            ApplyForm(0);
         }
 
         /// <summary>Full level reset (R): player to spawn as old man, walker back to its start.</summary>
@@ -121,6 +194,18 @@ namespace ParsaProto
                 w.ResetToStart();
             foreach (var b in Object.FindObjectsByType<PP_PushBlock>(FindObjectsSortMode.None))
                 b.ResetToStart();
+
+            // resets auto-start; the ready gate is armed separately on first load
+            waitingToStart = false;
+            _controller.inputLocked = false;
+        }
+
+        /// <summary>Freeze at spawn until Space. Used only for the initial load.</summary>
+        public void ArmReadyGate()
+        {
+            if (timerPaused) return;   // the hub needs no gate
+            waitingToStart = true;
+            _controller.inputLocked = true;
         }
 
         /// <summary>Hazards: send the body back to spawn without resetting the loop.</summary>

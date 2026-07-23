@@ -1,0 +1,150 @@
+using UnityEngine;
+
+namespace ParsaProto
+{
+    /// <summary>
+    /// Hub-and-spoke level flow in one scene. The hub has no timer and one
+    /// portal per level; portals unlock in order as levels are completed.
+    /// A level's PP_Exit calls LevelCompleted() which returns you to the hub.
+    /// When every level is complete, the hub's big door opens.
+    /// </summary>
+    public class PP_LevelManager : MonoBehaviour
+    {
+        [System.Serializable]
+        public class PP_Level
+        {
+            public string levelName;
+            [Tooltip("Drag the level's PP_SpawnPoint marker here.")]
+            public Transform spawnPoint;
+            [Tooltip("Where the still camera sits for this level (z is kept from the camera).")]
+            public Vector3 cameraPoint;
+            [Tooltip("Forms available: 1 = old man only ... 4 = full loop.")]
+            public int formCount = 4;
+            [Tooltip("Playtest sandbox: no timer, E cycles forms freely, completion never counts.")]
+            public bool sandbox = false;
+        }
+
+        public PP_AgeLoop player;
+        public Camera cam;
+        public PP_Level[] levels;
+
+        [Header("Hub")]
+        [Tooltip("Drag the hub's PP_SpawnPoint marker here.")]
+        public Transform hubSpawnPoint;
+        public Vector3 hubCamera;
+        [Tooltip("The final door in the hub; opens once every level is complete.")]
+        public GameObject bigDoor;
+
+        [Header("Editor Preview")]
+        [Tooltip("Snap the camera to a view in the Game window: -1 = hub, otherwise a Levels list index. Edit-mode convenience; ignored in Play mode.")]
+        public int previewLevelIndex = -1;
+
+        int _lastPreview = -2;
+
+        int _current = -1;            // -1 = in the hub
+        int _highestCompleted = -1;
+
+        public bool InHub => _current < 0;
+        public int CurrentIndex => _current;
+        public int HighestCompleted => _highestCompleted;
+
+        [Header("Debug")]
+        [Tooltip("Where Play mode starts: -1 = hub, otherwise a Levels list index.")]
+        public int startLevelIndex = -1;
+
+        [Tooltip("Run the real countdown in the playground (E stops free-cycling and ages down normally). Live: flip during Play.")]
+        public bool playgroundTimerOn = false;
+
+        void Start()
+        {
+            if (cam == null) cam = Camera.main;
+            if (startLevelIndex < 0)
+            {
+                EnterHub();
+            }
+            else
+            {
+                EnterLevel(startLevelIndex);
+                if (player != null) player.ArmReadyGate();   // first load waits for Space
+            }
+        }
+
+        void Update()
+        {
+            // live-apply the playground timer toggle while inside a sandbox level
+            if (_current >= 0 && levels != null && _current < levels.Length
+                && levels[_current].sandbox && player != null)
+                player.freeCycle = !playgroundTimerOn;
+        }
+
+        public bool IsUnlocked(int levelIndex) => levelIndex == _highestCompleted + 1;
+
+        public void EnterHub()
+        {
+            if (player == null) return;
+            _current = -1;
+            player.activeFormCount = 1;      // you idle in the hub as the old man
+            player.timerPaused = true;
+            player.freeCycle = false;
+            if (hubSpawnPoint != null) player.SetSpawn(hubSpawnPoint.position);
+            SnapCamera(hubCamera);
+            player.RestartLevel();
+        }
+
+        public void EnterLevel(int index)
+        {
+            if (levels == null || levels.Length == 0 || player == null) return;
+
+            _current = Mathf.Clamp(index, 0, levels.Length - 1);
+            PP_Level lv = levels[_current];
+
+            player.activeFormCount = lv.formCount;
+            player.timerPaused = false;
+            player.freeCycle = lv.sandbox && !playgroundTimerOn;
+            if (lv.spawnPoint != null) player.SetSpawn(lv.spawnPoint.position);
+            SnapCamera(lv.cameraPoint);
+            player.RestartLevel();
+        }
+
+        /// <summary>Called by a level's exit: back to the hub, next portal unlocked.</summary>
+        public void LevelCompleted()
+        {
+            if (_current >= 0 && !levels[_current].sandbox)
+                _highestCompleted = Mathf.Max(_highestCompleted, _current);
+
+            if (bigDoor != null && AllRealLevelsDone())
+                bigDoor.SetActive(false);    // every real level done: the big door opens
+
+            EnterHub();
+        }
+
+        void OnValidate()
+        {
+            if (Application.isPlaying || previewLevelIndex == _lastPreview) return;
+            _lastPreview = previewLevelIndex;
+
+            Camera c = cam != null ? cam : Camera.main;
+            if (c == null) return;
+
+            Vector3 point = hubCamera;
+            if (previewLevelIndex >= 0 && levels != null && previewLevelIndex < levels.Length)
+                point = levels[previewLevelIndex].cameraPoint;
+
+            c.transform.position = new Vector3(point.x, point.y, c.transform.position.z);
+        }
+
+        bool AllRealLevelsDone()
+        {
+            if (levels == null || levels.Length == 0) return false;
+            for (int i = 0; i < levels.Length; i++)
+                if (!levels[i].sandbox && i > _highestCompleted) return false;
+            return true;
+        }
+
+        void SnapCamera(Vector3 pos)
+        {
+            if (cam != null)
+                cam.transform.position = new Vector3(pos.x, pos.y, cam.transform.position.z);
+        }
+    }
+}

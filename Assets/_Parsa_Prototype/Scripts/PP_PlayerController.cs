@@ -43,6 +43,12 @@ namespace ParsaProto
         [Tooltip("Window to buffer a jump pressed just before landing.")]
         public float jumpBufferTime = 0.10f;
 
+        [Header("Air Jump (old man's fart jump)")]
+        [Tooltip("Enabled per form by PP_AgeLoop (old man only).")]
+        public bool airJumpEnabled = false;
+        [Tooltip("Height of the mid-air boost, in blocks. Weaker than a real jump.")]
+        public float airJumpHeightBlocks = 1.2f;
+
         [Header("Dash")]
         [Tooltip("Enabled per form by PP_AgeLoop (teen only).")]
         public bool dashEnabled = false;
@@ -68,6 +74,9 @@ namespace ParsaProto
 
         float _coyoteCounter;
         float _jumpBufferCounter;
+        bool _jumpQueued;
+        bool _airJumpUsed;
+
         float _dashTimer;
         float _dashCooldownTimer;
         bool _dashQueued;
@@ -76,6 +85,13 @@ namespace ParsaProto
 
         public int Facing => _facing;
         public float MoveInput => _moveInput;
+        public bool IsGrounded => _isGrounded;
+
+        /// <summary>True while something else (grapple swing) owns the body.</summary>
+        [System.NonSerialized] public bool controlSuspended;
+
+        /// <summary>Ready-gate: physics runs but all input is ignored.</summary>
+        [System.NonSerialized] public bool inputLocked;
         bool _isGrounded;
         bool _jumping;
 
@@ -94,6 +110,7 @@ namespace ParsaProto
             // --- input (New Input System, keyboard direct) ---
             var kb = Keyboard.current;
             if (kb == null) { _moveInput = 0f; return; }
+            if (inputLocked) { _moveInput = 0f; _jumpHeld = false; return; }
 
             float left = (kb.aKey.isPressed || kb.leftArrowKey.isPressed) ? 1f : 0f;
             float right = (kb.dKey.isPressed || kb.rightArrowKey.isPressed) ? 1f : 0f;
@@ -104,7 +121,11 @@ namespace ParsaProto
                                || kb.upArrowKey.wasPressedThisFrame;
             _jumpHeld = kb.spaceKey.isPressed || kb.wKey.isPressed || kb.upArrowKey.isPressed;
 
-            if (jumpPressed) _jumpBufferCounter = jumpBufferTime;
+            if (jumpPressed)
+            {
+                _jumpBufferCounter = jumpBufferTime;
+                _jumpQueued = true;
+            }
 
             if (_moveInput > 0.01f) _facing = 1;
             else if (_moveInput < -0.01f) _facing = -1;
@@ -122,7 +143,18 @@ namespace ParsaProto
             _coyoteCounter = _isGrounded ? coyoteTime : _coyoteCounter - dt;
             _jumpBufferCounter -= dt;
             _dashCooldownTimer -= dt;
-            if (_isGrounded) _dashUsedInAir = false;
+            if (_isGrounded)
+            {
+                _dashUsedInAir = false;
+                _airJumpUsed = false;
+            }
+
+            if (controlSuspended)
+            {
+                _dashQueued = false;
+                _jumpQueued = false;
+                return;      // grapple owns velocity and gravity right now
+            }
 
             // dash overrides everything while active
             if (_dashTimer > 0f)
@@ -178,6 +210,21 @@ namespace ParsaProto
                 _jumpBufferCounter = 0f;
                 _coyoteCounter = 0f;
             }
+            else if (_jumpQueued && !_isGrounded && airJumpEnabled
+                     && !_airJumpUsed && _coyoteCounter <= 0f)
+            {
+                // fart jump: one weaker boost per airtime
+                float v0 = Mathf.Sqrt(2f * gravityUp * airJumpHeightBlocks);
+                Vector2 v = _rb.linearVelocity;
+                v.y = v0;
+                _rb.linearVelocity = v;
+
+                _jumping = true;
+                _airJumpUsed = true;
+                _jumpBufferCounter = 0f;
+            }
+
+            _jumpQueued = false;
         }
 
         void HandleGravity(float dt)

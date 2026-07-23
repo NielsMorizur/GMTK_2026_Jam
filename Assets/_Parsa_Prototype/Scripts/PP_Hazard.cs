@@ -11,7 +11,7 @@ namespace ParsaProto
         void OnTriggerEnter2D(Collider2D other)
         {
             var loop = other.GetComponent<PP_AgeLoop>();
-            if (loop != null) loop.ReturnToStart();
+            if (loop != null) loop.RestartLevel();   // hazard = death: full reset, old man
         }
     }
 }
