@@ -37,6 +37,8 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask whatIsGround;
     public bool groundDetected {get; private set;}
 
+    public bool hasDoubleJump { get; set; } = true;
+
     private void Awake()
     {
         anim = GetComponentInChildren<Animator>();

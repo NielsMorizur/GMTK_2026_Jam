@@ -7,11 +7,12 @@ public class PlayerAgeStats : ScriptableObject
     public float moveSpeed = 5f;
     public float jumpForce = 5f;
     [Range(0f, 1f)]
-    public float inAirMoveMultiplier = 0.7f;
+    public float inAirMoveMultiplier = 1f;
 
     [Header("Abilities")]
     public bool canJump = true;
     public bool canPush = true;
+    public bool canDoubleJump = true;
 
     [Header("Visuals")]
     public RuntimeAnimatorController animatorController;

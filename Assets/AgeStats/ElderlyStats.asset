@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAgeStats
   moveSpeed: 7
   jumpForce: 10
-  inAirMoveMultiplier: 0.7
+  inAirMoveMultiplier: 1
   canJump: 1
   canPush: 0
+  canDoubleJump: 1
   animatorController: {fileID: 0}
   spriteColor: {r: 0, g: 0, b: 0, a: 1}
