@@ -1,0 +1,183 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace ParsaProto
+{
+    /// <summary>
+    /// 2D platformer controller for the GMTK jam prototype.
+    /// Good-feel movement: acceleration/friction, coyote time, jump buffer,
+    /// variable jump height. Reads the New Input System directly off the
+    /// keyboard so it needs no shared .inputactions asset.
+    /// Unity 6: uses Rigidbody2D.linearVelocity.
+    /// </summary>
+    [RequireComponent(typeof(Rigidbody2D))]
+    public class PP_PlayerController : MonoBehaviour
+    {
+        [Header("Move")]
+        [Tooltip("Top horizontal speed, units/sec.")]
+        public float moveSpeed = 8f;
+        [Tooltip("How fast we reach top speed on the ground.")]
+        public float groundAccel = 90f;
+        [Tooltip("How fast we stop on the ground.")]
+        public float groundDecel = 110f;
+        [Tooltip("Air control multiplier (0 = no control, 1 = full).")]
+        [Range(0f, 1f)] public float airControl = 0.65f;
+
+        [Header("Jump")]
+        [Tooltip("Peak jump height in world units.")]
+        public float jumpHeight = 3.2f;
+        [Tooltip("Gravity while rising.")]
+        public float gravityUp = 45f;
+        [Tooltip("Gravity while falling (higher = snappier).")]
+        public float gravityDown = 70f;
+        [Tooltip("Extra gravity when jump released early (variable height).")]
+        public float jumpCutMultiplier = 3f;
+        [Tooltip("Clamp on fall speed.")]
+        public float maxFallSpeed = 24f;
+
+        [Header("Feel")]
+        [Tooltip("Grace window to still jump just after leaving a ledge.")]
+        public float coyoteTime = 0.10f;
+        [Tooltip("Window to buffer a jump pressed just before landing.")]
+        public float jumpBufferTime = 0.10f;
+
+        [Header("Ground Check")]
+        [Tooltip("Probe box under the feet.")]
+        public Vector2 groundCheckSize = new Vector2(0.8f, 0.12f);
+        [Tooltip("How far below the collider to probe.")]
+        public float groundCheckDistance = 0.06f;
+        public LayerMask groundLayers = ~0;
+
+        Rigidbody2D _rb;
+        Collider2D _col;
+
+        float _moveInput;
+        bool _jumpHeld;
+
+        float _coyoteCounter;
+        float _jumpBufferCounter;
+        bool _isGrounded;
+        bool _jumping;
+
+        void Awake()
+        {
+            _rb = GetComponent<Rigidbody2D>();
+            _col = GetComponent<Collider2D>();
+            _rb.gravityScale = 0f;              // we drive gravity manually for feel
+            _rb.freezeRotation = true;
+            _rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        }
+
+        void Update()
+        {
+            // --- input (New Input System, keyboard direct) ---
+            var kb = Keyboard.current;
+            if (kb == null) { _moveInput = 0f; return; }
+
+            float left = (kb.aKey.isPressed || kb.leftArrowKey.isPressed) ? 1f : 0f;
+            float right = (kb.dKey.isPressed || kb.rightArrowKey.isPressed) ? 1f : 0f;
+            _moveInput = right - left;
+
+            bool jumpPressed = kb.spaceKey.wasPressedThisFrame
+                               || kb.wKey.wasPressedThisFrame
+                               || kb.upArrowKey.wasPressedThisFrame;
+            _jumpHeld = kb.spaceKey.isPressed || kb.wKey.isPressed || kb.upArrowKey.isPressed;
+
+            if (jumpPressed) _jumpBufferCounter = jumpBufferTime;
+        }
+
+        void FixedUpdate()
+        {
+            float dt = Time.fixedDeltaTime;
+
+            _isGrounded = GroundCheck();
+
+            // timers
+            _coyoteCounter = _isGrounded ? coyoteTime : _coyoteCounter - dt;
+            _jumpBufferCounter -= dt;
+
+            HandleHorizontal(dt);
+            HandleJump();
+            HandleGravity(dt);
+        }
+
+        void HandleHorizontal(float dt)
+        {
+            Vector2 v = _rb.linearVelocity;
+            float target = _moveInput * moveSpeed;
+            bool accelerating = Mathf.Abs(target) > 0.01f;
+            float rate = accelerating ? groundAccel : groundDecel;
+            if (!_isGrounded) rate *= airControl;
+            v.x = Mathf.MoveTowards(v.x, target, rate * dt);
+            _rb.linearVelocity = v;
+        }
+
+        void HandleJump()
+        {
+            if (_jumpBufferCounter > 0f && _coyoteCounter > 0f)
+            {
+                // v = sqrt(2 * g * h) using the rising gravity
+                float jumpVelocity = Mathf.Sqrt(2f * gravityUp * jumpHeight);
+                Vector2 v = _rb.linearVelocity;
+                v.y = jumpVelocity;
+                _rb.linearVelocity = v;
+
+                _jumping = true;
+                _jumpBufferCounter = 0f;
+                _coyoteCounter = 0f;
+            }
+        }
+
+        void HandleGravity(float dt)
+        {
+            Vector2 v = _rb.linearVelocity;
+
+            float g = v.y > 0f ? gravityUp : gravityDown;
+
+            // variable height: cut the rise short when jump released
+            if (_jumping && v.y > 0f && !_jumpHeld)
+                g *= jumpCutMultiplier;
+
+            if (v.y <= 0f) _jumping = false;
+
+            v.y -= g * dt;
+            if (v.y < -maxFallSpeed) v.y = -maxFallSpeed;
+
+            _rb.linearVelocity = v;
+        }
+
+        bool GroundCheck()
+        {
+            if (_col == null) return false;
+
+            // Probe a thin box just under the feet. No dedicated ground layer
+            // (that lives in shared ProjectSettings), so scan groundLayers and
+            // ignore our own collider / body.
+            Bounds b = _col.bounds;
+            Vector2 center = new Vector2(b.center.x, b.min.y - groundCheckDistance * 0.5f);
+            Vector2 size = new Vector2(groundCheckSize.x, groundCheckSize.y + groundCheckDistance);
+
+            Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f, groundLayers);
+            foreach (var h in hits)
+            {
+                if (h == null || h == _col || h.isTrigger) continue;
+                if (h.attachedRigidbody != null && h.attachedRigidbody == _rb) continue;
+                // only count it as ground if we're not moving up through it
+                if (_rb.linearVelocity.y <= 0.01f) return true;
+            }
+            return false;
+        }
+
+        void OnDrawGizmosSelected()
+        {
+            var col = GetComponent<Collider2D>();
+            if (col == null) return;
+            Bounds b = col.bounds;
+            Vector2 center = new Vector2(b.center.x, b.min.y - groundCheckDistance * 0.5f);
+            Vector2 size = new Vector2(groundCheckSize.x, groundCheckSize.y + groundCheckDistance);
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(center, new Vector3(size.x, size.y, 0f));
+        }
+    }
+}
