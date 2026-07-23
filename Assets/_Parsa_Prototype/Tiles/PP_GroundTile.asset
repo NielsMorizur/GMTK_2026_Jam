@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: PP_GroundTile
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 5469aefeabbb454d9baa1df12a360ee4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4b34e657e31fea644b1e04f24c01d821, type: 3}
   m_Color: {r: 0.9103774, g: 0.9376538, b: 1, a: 1}
   m_Transform:
     e00: 1

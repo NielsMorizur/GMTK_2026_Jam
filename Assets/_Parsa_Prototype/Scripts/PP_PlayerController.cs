@@ -68,6 +68,7 @@ namespace ParsaProto
 
         Rigidbody2D _rb;
         Collider2D _col;
+        SpriteRenderer _sprite;
 
         float _moveInput;
         bool _jumpHeld;
@@ -99,6 +100,7 @@ namespace ParsaProto
         {
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<Collider2D>();
+            _sprite = GetComponent<SpriteRenderer>();
             _rb.gravityScale = 0f;              // we drive gravity manually for feel
             _rb.freezeRotation = true;
             _rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
@@ -129,6 +131,8 @@ namespace ParsaProto
 
             if (_moveInput > 0.01f) _facing = 1;
             else if (_moveInput < -0.01f) _facing = -1;
+
+            if (_sprite != null) _sprite.flipX = _facing < 0;
 
             if (kb.leftShiftKey.wasPressedThisFrame) _dashQueued = true;
         }

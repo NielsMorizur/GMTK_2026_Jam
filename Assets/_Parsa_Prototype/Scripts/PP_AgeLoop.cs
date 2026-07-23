@@ -17,8 +17,6 @@ namespace ParsaProto
         {
             public string formName;
             public Color color = Color.white;
-            [Tooltip("Body size in blocks. Taller than 1 = can't fit 1-block gaps.")]
-            public Vector2 scale = Vector2.one;
             public float moveSpeed = 7f;
             public int jumpHeightBlocks = 3;
             [Tooltip("Signature ability: dash (teen).")]
@@ -38,14 +36,29 @@ namespace ParsaProto
         [Tooltip("Optional world-space label showing form + countdown.")]
         public TextMesh label;
 
-        [Tooltip("Falling below this y returns the player to the level spawn.")]
-        public float fallKillY = -20f;
+        [Tooltip("Die after falling this many units below the level's spawn point.")]
+        public float fallKillDepth = 25f;
+
+        [Tooltip("Real-time freeze on every form swap, to sell the transition.")]
+        public float swapFreezeTime = 0.18f;
+
+        [Tooltip("The baby (last form) shrinks to this fraction of the player's normal size.")]
+        public float babySizeMultiplier = 0.7f;
+
+        [Tooltip("Fullscreen tint overlay (sprite under the camera); colored per form.")]
+        public SpriteRenderer screenTint;
+
+        [Tooltip("How strong the screen tint is. 0 = off.")]
+        [Range(0f, 0.5f)] public float tintAlpha = 0.1f;
+
+        float _freezeUntil = -1f;
 
         PP_PlayerController _controller;
         PP_Grapple _grapple;
         SpriteRenderer _sprite;
         Rigidbody2D _rb;
         Vector3 _spawnPoint;
+        Vector3 _baseScale;
 
         /// <summary>Forms available this level (set by PP_LevelManager). 0 = all.</summary>
         [System.NonSerialized] public int activeFormCount;
@@ -59,7 +72,6 @@ namespace ParsaProto
         /// <summary>Ready gate: level is armed but waits for Space.</summary>
         [System.NonSerialized] public bool waitingToStart;
 
-        bool _startRequested;
 
         int MaxForms => activeFormCount > 0
             ? Mathf.Min(activeFormCount, forms.Length)
@@ -69,6 +81,8 @@ namespace ParsaProto
         float _timer;
 
         public int FormIndex => _formIndex;
+        public float TimeLeftInForm => _timer;
+        public int FormsThisLevel => MaxForms;
         public PP_Form CurrentForm =>
             (forms != null && forms.Length > 0) ? forms[_formIndex] : null;
 
@@ -79,6 +93,7 @@ namespace ParsaProto
             _sprite = GetComponent<SpriteRenderer>();
             _rb = GetComponent<Rigidbody2D>();
             _spawnPoint = transform.position;
+            _baseScale = transform.localScale;
         }
 
         void Start()
@@ -96,18 +111,41 @@ namespace ParsaProto
         {
             if (forms == null || forms.Length == 0) return;
 
-            if (transform.position.y < fallKillY)
-                RestartLevel();                       // pit fall = death
+            // swap hitstop: everything waits, then resumes
+            if (_freezeUntil >= 0f)
+            {
+                if (Time.unscaledTime >= _freezeUntil)
+                {
+                    Time.timeScale = 1f;
+                    _freezeUntil = -1f;
+                }
+                else return;
+            }
+
+            if (transform.position.y < _spawnPoint.y - fallKillDepth)
+                RestartLevel();                       // pit fall = death (relative to this level)
 
             var kb = Keyboard.current;
 
             if (waitingToStart)
             {
-                if (kb != null && kb.spaceKey.wasPressedThisFrame)
-                    _startRequested = true;
-                if (label != null && CurrentForm != null)
-                    label.text = CurrentForm.formName + "  - press Space";
-                return;
+                bool inputMade = kb != null &&
+                    (kb.aKey.isPressed || kb.dKey.isPressed
+                     || kb.leftArrowKey.isPressed || kb.rightArrowKey.isPressed
+                     || kb.wKey.isPressed || kb.sKey.isPressed
+                     || kb.upArrowKey.isPressed || kb.downArrowKey.isPressed
+                     || kb.spaceKey.isPressed || kb.leftShiftKey.isPressed
+                     || kb.eKey.isPressed);
+                if (inputMade)
+                {
+                    waitingToStart = false;
+                    _timer = formDuration;    // the clock starts on the first input
+                }
+                else
+                {
+                    if (label != null) label.text = "- move to start -";
+                    return;
+                }
             }
 
             if (kb != null && kb.rKey.wasPressedThisFrame)
@@ -119,9 +157,12 @@ namespace ParsaProto
             if (freeCycle)
             {
                 if (kb != null && kb.eKey.wasPressedThisFrame)
+                {
                     ApplyForm((_formIndex + 1) % forms.Length);
-                if (label != null && CurrentForm != null)
-                    label.text = CurrentForm.formName;
+                    HitStop();
+                }
+                if (label != null)
+                    label.text = "";
                 return;
             }
 
@@ -134,29 +175,19 @@ namespace ParsaProto
                 if (_timer <= 0f || ageDownPressed)
                 {
                     if (_formIndex + 1 < MaxForms)
+                    {
                         ApplyForm(_formIndex + 1);   // age down
+                        HitStop();
+                    }
                     else
+                    {
                         RestartLevel();              // last allowed form expired: die, level resets
+                    }
                 }
             }
 
-            if (label != null && CurrentForm != null)
-                label.text = timerPaused
-                    ? CurrentForm.formName
-                    : $"{CurrentForm.formName}  {Mathf.CeilToInt(Mathf.Max(_timer, 0f))}";
-        }
-
-        void LateUpdate()
-        {
-            // unlock AFTER every Update ran this frame, so the starting Space
-            // press can never double as a buffered jump
-            if (_startRequested)
-            {
-                _startRequested = false;
-                waitingToStart = false;
-                _controller.inputLocked = false;
-                _timer = formDuration;    // countdown starts NOW, not at level entry
-            }
+            if (label != null)
+                label.text = "";
         }
 
         void ApplyForm(int index)
@@ -165,8 +196,14 @@ namespace ParsaProto
             _timer = formDuration;
 
             PP_Form f = forms[index];
-            transform.localScale = new Vector3(f.scale.x, f.scale.y, 1f);
-            if (_sprite != null) _sprite.color = f.color;
+
+            // only the baby (last form) changes size; everyone else keeps the authored scale
+            bool isBaby = index == forms.Length - 1;
+            transform.localScale = isBaby ? _baseScale * babySizeMultiplier : _baseScale;
+
+            // the form shows on the screen, not the character: a light fullscreen tint
+            if (screenTint != null)
+                screenTint.color = new Color(f.color.r, f.color.g, f.color.b, tintAlpha);
             _controller.moveSpeed = f.moveSpeed;
             _controller.jumpHeightBlocks = f.jumpHeightBlocks;
             _controller.dashEnabled = f.canDash;
@@ -177,12 +214,6 @@ namespace ParsaProto
                 if (!f.canGrapple) _grapple.ForceRelease();
             }
 
-            // keep the label readable: cancel the parent's scale and sit above the head
-            if (label != null)
-            {
-                label.transform.localScale = new Vector3(1f / f.scale.x, 1f / f.scale.y, 1f);
-                label.transform.localPosition = new Vector3(0f, 0.5f + 0.9f / f.scale.y, 0f);
-            }
         }
 
         /// <summary>Full level reset (R): player to spawn as old man, walker back to its start.</summary>
@@ -195,17 +226,18 @@ namespace ParsaProto
             foreach (var b in Object.FindObjectsByType<PP_PushBlock>(FindObjectsSortMode.None))
                 b.ResetToStart();
 
-            // resets auto-start; the ready gate is armed separately on first load
-            waitingToStart = false;
-            _controller.inputLocked = false;
+            Time.timeScale = 1f;
+            _freezeUntil = -1f;
+
+            // every level (re)start waits for the first input to start the clock
+            waitingToStart = !timerPaused;
         }
 
-        /// <summary>Freeze at spawn until Space. Used only for the initial load.</summary>
-        public void ArmReadyGate()
+        void HitStop()
         {
-            if (timerPaused) return;   // the hub needs no gate
-            waitingToStart = true;
-            _controller.inputLocked = true;
+            if (swapFreezeTime <= 0f) return;
+            Time.timeScale = 0f;
+            _freezeUntil = Time.unscaledTime + swapFreezeTime;
         }
 
         /// <summary>Hazards: send the body back to spawn without resetting the loop.</summary>

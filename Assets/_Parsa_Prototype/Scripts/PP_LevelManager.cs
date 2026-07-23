@@ -41,6 +41,9 @@ namespace ParsaProto
 
         int _lastPreview = -2;
 
+        [Tooltip("Tick to save the camera's CURRENT position as the camera point of the previewed level (or the hub when previewing -1). Unticks itself.")]
+        public bool saveCameraHere = false;
+
         int _current = -1;            // -1 = in the hub
         int _highestCompleted = -1;
 
@@ -55,18 +58,19 @@ namespace ParsaProto
         [Tooltip("Run the real countdown in the playground (E stops free-cycling and ages down normally). Live: flip during Play.")]
         public bool playgroundTimerOn = false;
 
+        [Tooltip("Camera follows the player instead of sitting still. Live: flip during Play.")]
+        public bool followPlayer = false;
+
+        [Tooltip("How quickly the follow camera catches up. Lower = snappier.")]
+        public float followSmoothTime = 0.15f;
+
+        Vector3 _followVelocity;
+
         void Start()
         {
             if (cam == null) cam = Camera.main;
-            if (startLevelIndex < 0)
-            {
-                EnterHub();
-            }
-            else
-            {
-                EnterLevel(startLevelIndex);
-                if (player != null) player.ArmReadyGate();   // first load waits for Space
-            }
+            if (startLevelIndex < 0) EnterHub();
+            else EnterLevel(startLevelIndex);
         }
 
         void Update()
@@ -75,6 +79,16 @@ namespace ParsaProto
             if (_current >= 0 && levels != null && _current < levels.Length
                 && levels[_current].sandbox && player != null)
                 player.freeCycle = !playgroundTimerOn;
+        }
+
+        void LateUpdate()
+        {
+            if (!followPlayer || cam == null || player == null) return;
+            Vector3 goal = new Vector3(player.transform.position.x,
+                                       player.transform.position.y + 1f,
+                                       cam.transform.position.z);
+            cam.transform.position = Vector3.SmoothDamp(
+                cam.transform.position, goal, ref _followVelocity, followSmoothTime);
         }
 
         public bool IsUnlocked(int levelIndex) => levelIndex == _highestCompleted + 1;
@@ -120,7 +134,24 @@ namespace ParsaProto
 
         void OnValidate()
         {
-            if (Application.isPlaying || previewLevelIndex == _lastPreview) return;
+            if (Application.isPlaying) return;
+
+            if (saveCameraHere)
+            {
+                saveCameraHere = false;
+                Camera sc = cam != null ? cam : Camera.main;
+                if (sc != null)
+                {
+                    Vector3 cp = sc.transform.position;
+                    if (previewLevelIndex >= 0 && levels != null && previewLevelIndex < levels.Length)
+                        levels[previewLevelIndex].cameraPoint = new Vector3(cp.x, cp.y, 0f);
+                    else
+                        hubCamera = new Vector3(cp.x, cp.y, 0f);
+                }
+                return;
+            }
+
+            if (previewLevelIndex == _lastPreview) return;
             _lastPreview = previewLevelIndex;
 
             Camera c = cam != null ? cam : Camera.main;
