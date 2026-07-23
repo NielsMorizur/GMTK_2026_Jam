@@ -5,9 +5,12 @@ public class PlayerAgeStats : ScriptableObject
 {
     [Header("Movement")]
     public float moveSpeed = 5f;
-    public float jumpForce = 5f;
     [Range(0f, 1f)]
     public float inAirMoveMultiplier = 1f;
+
+    [Header("Jump")]
+    [Tooltip("Jump height in world units (1 = one tile/block).")]
+    public float jumpHeightBlocks = 3f;
 
     [Header("Abilities")]
     public bool canJump = true;

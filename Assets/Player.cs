@@ -31,13 +31,25 @@ public class Player : MonoBehaviour
     [Header("Movement details")]
     private bool facingRight = true;
     public Vector2 moveInput {get; private set;}
+    public bool hasDoubleJump { get; set; } = true;
+
+    [Header("Jump feel")]
+    [Tooltip("Grace window (seconds) to still jump after walking off a ledge.")]
+    public float coyoteTime = 0.1f;
+    [Tooltip("Window (seconds) a jump press is remembered before landing.")]
+    public float jumpBufferTime = 0.1f;
+    [Tooltip("Extra height added on top of the block height so a jump clears the ledge instead of grazing it.")]
+    public float jumpClearance = 0.35f;
+    [Tooltip("How much upward velocity survives when jump is released early. 0 = hard cut, 1 = no cut.")]
+    [Range(0f, 1f)] public float jumpCutMultiplier = 0.5f;
+
+    private float coyoteTimer;
+    private float jumpBufferTimer;
 
     [Header("Collision detection")]
     [SerializeField] private float groundCheckDistance;
     [SerializeField] private LayerMask whatIsGround;
     public bool groundDetected {get; private set;}
-
-    public bool hasDoubleJump { get; set; } = true;
 
     private void Awake()
     {
@@ -78,7 +90,39 @@ public class Player : MonoBehaviour
     private void Update()
     {
         HandleCollisionDetection();
+        HandleJumpTimers();
+        HandleJumpTrigger();
         stateMachine.UpdateActiveState();
+    }
+
+    private void HandleJumpTimers()
+    {
+        coyoteTimer = groundDetected ? coyoteTime : coyoteTimer - Time.deltaTime;
+
+        if (input.Player.Jump.WasPerformedThisFrame())
+            jumpBufferTimer = jumpBufferTime;
+        else
+            jumpBufferTimer -= Time.deltaTime;
+    }
+
+    private void HandleJumpTrigger()
+    {
+        if (jumpBufferTimer > 0f && coyoteTimer > 0f && Stats != null && Stats.canJump)
+        {
+            jumpBufferTimer = 0f;
+            coyoteTimer = 0f;
+            hasDoubleJump = true; // fresh airborne trip, restore the double jump
+            stateMachine.ChangeState(jumpState);
+        }
+    }
+
+    // v = sqrt(2 * g * h), using the Rigidbody2D's own gravity scale so jump
+    // height in "blocks" stays accurate to however gravity is tuned in the Inspector.
+    public float GetJumpVelocity(float heightInBlocks)
+    {
+        float gravity = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
+        float height = heightInBlocks + jumpClearance;
+        return Mathf.Sqrt(2f * gravity * height);
     }
 
     public void SetAge(AgeStage newAge)
