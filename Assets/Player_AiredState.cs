@@ -10,6 +10,6 @@ public class Player_AiredState : EntityState
     {
         base.Update();
 
-        player.SetVelocity(player.moveInput.x * (player.moveSpeed * player.inAirMoveMultiplier), rb.linearVelocity.y);
+        player.SetVelocity(player.moveInput.x * (player.Stats.moveSpeed * player.Stats.inAirMoveMultiplier), rb.linearVelocity.y);
     }
 }

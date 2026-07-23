@@ -15,11 +15,20 @@ public class Player : MonoBehaviour
     public Player_JumpState jumpState {get; private set;}
     public Player_FallState fallState {get; private set;}
 
+    [Header("Age")]
+    [SerializeField] private AgeStage startingAge = AgeStage.Elderly;
+    [SerializeField] private PlayerAgeStats babyStats;
+    [SerializeField] private PlayerAgeStats teenStats;
+    [SerializeField] private PlayerAgeStats adultStats;
+    [SerializeField] private PlayerAgeStats elderlyStats;
+
+    public AgeStage CurrentAge {get; private set;}
+    public PlayerAgeStats Stats {get; private set;}
+
+    [Header("Visuals")]
+    [SerializeField] private SpriteRenderer sr;
 
     [Header("Movement details")]
-    public float moveSpeed;
-    public float jumpForce = 5;
-    public float inAirMoveMultiplier = 0.7f; // Should be from 0 to 1
     private bool facingRight = true;
     public Vector2 moveInput {get; private set;}
 
@@ -32,6 +41,9 @@ public class Player : MonoBehaviour
     {
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
+
+        if (sr == null)
+            sr = GetComponentInChildren<SpriteRenderer>();
 
         stateMachine = new StateMachine();
         input = new PlayerInputSet();
@@ -57,6 +69,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        SetAge(startingAge);
         stateMachine.Initialize(idleState);
     }
 
@@ -64,6 +77,32 @@ public class Player : MonoBehaviour
     {
         HandleCollisionDetection();
         stateMachine.UpdateActiveState();
+    }
+
+    public void SetAge(AgeStage newAge)
+    {
+        CurrentAge = newAge;
+
+        Stats = newAge switch
+        {
+            AgeStage.Baby => babyStats,
+            AgeStage.Teen => teenStats,
+            AgeStage.Adult => adultStats,
+            AgeStage.Elderly => elderlyStats,
+            _ => adultStats
+        };
+
+        if (Stats == null)
+        {
+            Debug.LogWarning($"No PlayerAgeStats assigned for age: {newAge}");
+            return;
+        }
+
+        if (Stats.animatorController != null && anim != null)
+            anim.runtimeAnimatorController = Stats.animatorController;
+
+        if (sr != null)
+            sr.color = Stats.spriteColor;
     }
 
     public void SetVelocity(float xVelocity, float yVelocity)
