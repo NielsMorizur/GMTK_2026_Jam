@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b36d3be26a0311647896590e86f98803, type: 3}
   m_Name: BabyStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAgeStats
-  moveSpeed: 5
-  jumpForce: 5
+  moveSpeed: 7
+  jumpForce: 7
   inAirMoveMultiplier: 0.7
-  canJump: 0
+  canJump: 1
   canPush: 0
   animatorController: {fileID: 0}
   spriteColor: {r: 1, g: 1, b: 1, a: 1}

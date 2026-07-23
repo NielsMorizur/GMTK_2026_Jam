@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AdultStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAgeStats
   moveSpeed: 8
-  jumpForce: 10
+  jumpForce: 12
   inAirMoveMultiplier: 0.7
   canJump: 1
   canPush: 1

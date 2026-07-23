@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b36d3be26a0311647896590e86f98803, type: 3}
   m_Name: ElderlyStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAgeStats
-  moveSpeed: 6
-  jumpForce: 6
+  moveSpeed: 7
+  jumpForce: 10
   inAirMoveMultiplier: 0.7
   canJump: 1
   canPush: 0
