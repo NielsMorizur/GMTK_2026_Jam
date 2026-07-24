@@ -18,8 +18,6 @@ namespace ParsaProto
         public SpriteRenderer[] digitRenderers = new SpriteRenderer[3];
         [Tooltip("The cake body renderer.")]
         public SpriteRenderer cake;
-        [Tooltip("Flame particle objects, one per digit; shown with their digit.")]
-        public GameObject[] flames = new GameObject[3];
 
         [Header("Look")]
         public float digitSpacing = 0.34f;
@@ -68,11 +66,9 @@ namespace ParsaProto
                 var r = digitRenderers[i];
                 if (r == null) continue;
 
+                // toggle the whole digit object so flame + glow follow along
                 bool on = i < count;
-                r.enabled = on;
-                if (flames != null && i < flames.Length && flames[i] != null
-                    && flames[i].activeSelf != on)
-                    flames[i].SetActive(on);
+                if (r.gameObject.activeSelf != on) r.gameObject.SetActive(on);
                 if (!on) continue;
 
                 int divisor = (int)Mathf.Pow(10, count - 1 - i);
@@ -91,9 +87,8 @@ namespace ParsaProto
             if (cake != null) cake.enabled = on;
             if (on) return;
             foreach (var r in digitRenderers)
-                if (r != null) r.enabled = false;
-            foreach (var fl in flames)
-                if (fl != null && fl.activeSelf) fl.SetActive(false);
+                if (r != null && r.gameObject.activeSelf)
+                    r.gameObject.SetActive(false);
         }
     }
 }
