@@ -38,7 +38,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1085887189771691964}
-  - {fileID: 8800000000000000001}
+  - {fileID: 2340463487518154527}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &2035189913940086691
@@ -112,7 +112,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.03424096, y: -0.051360726}
+  m_Offset: {x: 0.067364305, y: -0.07620376}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -122,7 +122,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.9315181, y: 1.8}
+  m_Size: {x: 0.8652714, y: 1.7503139}
   m_EdgeRadius: 0
 --- !u!50 &6463880136291447349
 Rigidbody2D:
@@ -173,6 +173,7 @@ MonoBehaviour:
   jumpBufferTime: 0.1
   jumpClearance: 0.35
   jumpCutMultiplier: 0.5
+  minJumpHeightBlocks: 1.25
   dashSpeed: 18
   dashDuration: 0.15
   dashCooldown: 0.35
@@ -203,6 +204,139 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6df0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7788990011223344558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382231035341912332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  landingPrefab: {fileID: 8951663507169455475, guid: a70bc15b867204c4f99d5c61f11e6373, type: 3}
+  landingOffset: {x: 0, y: -0.95}
+  gasPrefab: {fileID: 8951663507169455475, guid: b0bc8d777d76c714291fe732171169b9, type: 3}
+  gasOffset: {x: 0.45, y: -0.2}
+--- !u!114 &7788990011223344559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382231035341912332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7788990011223344560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382231035341912332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  swapForm:
+    variations: []
+    volume: 1
+    pitchJitter: 0.05
+  fart:
+    variations: []
+    volume: 1
+    pitchJitter: 0.05
+  grappleAttached:
+    variations: []
+    volume: 1
+    pitchJitter: 0.05
+  grappleReleased:
+    variations: []
+    volume: 1
+    pitchJitter: 0.05
+  dash:
+    variations: []
+    volume: 1
+    pitchJitter: 0.05
+  victory:
+    variations: []
+    volume: 1
+    pitchJitter: 0.05
+  walking:
+    elderly:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    adult:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    teen:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    baby:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+  jump:
+    elderly:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    adult:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    teen:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    baby:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+  landing:
+    elderly:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    adult:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    teen:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    baby:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+  die:
+    elderly:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    adult:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    teen:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+    baby:
+      variations: []
+      volume: 1
+      pitchJitter: 0.05
+  stepInterval: 0.35
 --- !u!1 &8264326940950681256
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,7 +416,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -522101659
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 80e36b27565b35a468d5e4925e846064, type: 3}
@@ -318,22 +452,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7788990011223344558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 382231035341912332}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e10, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  landingPrefab: {fileID: 8951663507169455475, guid: a70bc15b867204c4f99d5c61f11e6373, type: 3}
-  landingOffset: {x: 0, y: -0.95}
-  gasPrefab: {fileID: 8951663507169455475, guid: b0bc8d777d76c714291fe732171169b9, type: 3}
-  gasOffset: {x: 0.45, y: -0.2}
 --- !u!1001 &8800000000000000011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -342,10 +460,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4471833503623918739}
     m_Modifications:
-    - target: {fileID: 8951663507169455475, guid: bc9961e43f7020445a4caf19a81578bd, type: 3}
-      propertyPath: m_Name
-      value: PP_WalkDirt
-      objectReference: {fileID: 0}
     - target: {fileID: 6513645713874394900, guid: bc9961e43f7020445a4caf19a81578bd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -358,37 +472,17 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8951663507169455475, guid: bc9961e43f7020445a4caf19a81578bd, type: 3}
+      propertyPath: m_Name
+      value: PP_WalkDirt
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc9961e43f7020445a4caf19a81578bd, type: 3}
---- !u!4 &8800000000000000001 stripped
+--- !u!4 &2340463487518154527 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6513645713874394900, guid: bc9961e43f7020445a4caf19a81578bd, type: 3}
   m_PrefabInstance: {fileID: 8800000000000000011}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7788990011223344559
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 382231035341912332}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e11, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
---- !u!114 &7788990011223344560
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 382231035341912332}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e13, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
