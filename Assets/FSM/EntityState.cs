@@ -31,6 +31,11 @@ public abstract class EntityState
         anim.SetFloat("yVelocity", rb.linearVelocity.y);
     }
 
+    public virtual void FixedUpdate()
+    {
+        
+    }
+
     public virtual void Exit()
     {
         anim.SetBool(animBoolName, false);

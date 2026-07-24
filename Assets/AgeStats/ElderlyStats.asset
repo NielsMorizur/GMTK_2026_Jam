@@ -12,12 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b36d3be26a0311647896590e86f98803, type: 3}
   m_Name: ElderlyStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAgeStats
-  moveSpeed: 7
+  moveSpeed: 8
   inAirMoveMultiplier: 1
   jumpHeightBlocks: 2
   canJump: 1
   canPush: 0
   canDoubleJump: 1
   canDash: 0
+  canGrapple: 0
+  colliderSizeY: 2
+  colliderOffsetY: 0
   animatorController: {fileID: 0}
   spriteColor: {r: 0, g: 0, b: 0, a: 1}

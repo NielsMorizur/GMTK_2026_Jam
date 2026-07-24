@@ -45,7 +45,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 7d66a19c4ed1ef04fb235e3c642e9ad3, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -116,6 +116,7 @@ MonoBehaviour:
   teenStats: {fileID: 11400000, guid: 371d49e4ec2781f40a088d5ff1ccab3f, type: 2}
   adultStats: {fileID: 11400000, guid: 41d7d72ea4cdd1b4c95c71145a88663a, type: 2}
   elderlyStats: {fileID: 11400000, guid: a7dc37774c66a5e438e1faf61bd50450, type: 2}
+  graphicsRoot: {fileID: 1085887189771691964}
   sr: {fileID: 0}
   coyoteTime: 0.1
   jumpBufferTime: 0.1
@@ -164,7 +165,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8264326940950681256}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

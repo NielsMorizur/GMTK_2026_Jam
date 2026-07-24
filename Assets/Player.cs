@@ -158,6 +158,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        stateMachine.FixedUpdateActiveState();
         if (IsGrappling)
             HandleGrapplePhysics();
     }

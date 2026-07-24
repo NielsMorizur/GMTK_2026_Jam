@@ -12,12 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b36d3be26a0311647896590e86f98803, type: 3}
   m_Name: TeenStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAgeStats
-  moveSpeed: 10
+  moveSpeed: 8
   inAirMoveMultiplier: 1
   jumpHeightBlocks: 2
   canJump: 1
   canPush: 0
   canDoubleJump: 0
   canDash: 1
+  canGrapple: 0
+  colliderSizeY: 2
+  colliderOffsetY: 0
   animatorController: {fileID: 0}
   spriteColor: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}

@@ -10,8 +10,6 @@ public class Player_AiredState : EntityState
     {
         base.Update();
 
-        player.SetVelocity(player.moveInput.x * (player.Stats.moveSpeed * player.Stats.inAirMoveMultiplier), rb.linearVelocity.y);
-
         if (input.Player.Jump.WasPerformedThisFrame() && player.Stats.canDoubleJump && player.hasDoubleJump)
         {
             stateMachine.ChangeState(player.jumpState);
@@ -20,5 +18,12 @@ public class Player_AiredState : EntityState
 
         if (player.groundDetected)
             player.hasDoubleJump = true;
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        
+        player.SetVelocity(player.moveInput.x * (player.Stats.moveSpeed * player.Stats.inAirMoveMultiplier), rb.linearVelocity.y);
     }
 }
