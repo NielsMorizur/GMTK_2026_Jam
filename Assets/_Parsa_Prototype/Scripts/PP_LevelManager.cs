@@ -22,6 +22,8 @@ namespace ParsaProto
             public int formCount = 4;
             [Tooltip("Playtest sandbox: no timer, E cycles forms freely, completion never counts.")]
             public bool sandbox = false;
+            [Tooltip("Player faces left on spawn/reset in this level (default: right).")]
+            public bool faceLeft = false;
         }
 
         public PP_AgeLoop player;
@@ -69,6 +71,12 @@ namespace ParsaProto
         void Start()
         {
             if (cam == null) cam = Camera.main;
+
+            // spawn markers are editor tools; the player never sees them
+            HideMarker(hubSpawnPoint);
+            if (levels != null)
+                foreach (var lv in levels)
+                    HideMarker(lv.spawnPoint);
             if (startLevelIndex < 0) EnterHub();
             else EnterLevel(startLevelIndex);
         }
@@ -100,6 +108,7 @@ namespace ParsaProto
             player.activeFormCount = 1;      // you idle in the hub as the old man
             player.timerPaused = true;
             player.freeCycle = false;
+            player.spawnFacing = 1;
             if (hubSpawnPoint != null) player.SetSpawn(hubSpawnPoint.position);
             SnapCamera(hubCamera);
             player.RestartLevel();
@@ -115,6 +124,7 @@ namespace ParsaProto
             player.activeFormCount = lv.formCount;
             player.timerPaused = false;
             player.freeCycle = lv.sandbox && !playgroundTimerOn;
+            player.spawnFacing = lv.faceLeft ? -1 : 1;
             if (lv.spawnPoint != null) player.SetSpawn(lv.spawnPoint.position);
             SnapCamera(lv.cameraPoint);
             player.RestartLevel();
@@ -170,6 +180,13 @@ namespace ParsaProto
             for (int i = 0; i < levels.Length; i++)
                 if (!levels[i].sandbox && i > _highestCompleted) return false;
             return true;
+        }
+
+        static void HideMarker(Transform t)
+        {
+            if (t == null) return;
+            var sr = t.GetComponent<SpriteRenderer>();
+            if (sr != null) sr.enabled = false;
         }
 
         void SnapCamera(Vector3 pos)

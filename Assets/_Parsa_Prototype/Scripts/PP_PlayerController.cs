@@ -85,6 +85,13 @@ namespace ParsaProto
         int _facing = 1;
 
         public int Facing => _facing;
+
+        /// <summary>Level spawn/reset sets the starting facing.</summary>
+        public void SetFacing(int dir)
+        {
+            _facing = dir < 0 ? -1 : 1;
+            if (_sprite != null) _sprite.flipX = _facing < 0;
+        }
         public float MoveInput => _moveInput;
         public bool IsGrounded => _isGrounded;
 

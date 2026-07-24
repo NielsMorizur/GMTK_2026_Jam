@@ -72,6 +72,9 @@ namespace ParsaProto
         /// <summary>Ready gate: level is armed but waits for Space.</summary>
         [System.NonSerialized] public bool waitingToStart;
 
+        /// <summary>Which way the player faces on spawn/reset (set per level).</summary>
+        [System.NonSerialized] public int spawnFacing = 1;
+
 
         int MaxForms => activeFormCount > 0
             ? Mathf.Min(activeFormCount, forms.Length)
@@ -228,6 +231,8 @@ namespace ParsaProto
 
             Time.timeScale = 1f;
             _freezeUntil = -1f;
+
+            _controller.SetFacing(spawnFacing);
 
             // every level (re)start waits for the first input to start the clock
             waitingToStart = !timerPaused;
