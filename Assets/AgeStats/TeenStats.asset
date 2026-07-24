@@ -22,5 +22,5 @@ MonoBehaviour:
   canGrapple: 0
   colliderSizeY: 2
   colliderOffsetY: 0
-  animatorController: {fileID: 0}
-  spriteColor: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
+  animatorController: {fileID: 9100000, guid: 5e8a89cd657744e6b3e2ecd5c3dfde6c, type: 2}
+  spriteColor: {r: 1, g: 1, b: 1, a: 1}

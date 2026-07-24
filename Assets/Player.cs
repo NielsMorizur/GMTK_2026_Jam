@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     public Player_FallState fallState {get; private set;}
     public Player_DashState dashState {get; private set;}
     public Player_GrappleState grappleState {get; private set;}
+    public Player_DoubleJumpState doubleJumpState {get; private set;}
 
     [Header("Age")]
     [SerializeField] private AgeStage startingAge = AgeStage.Elderly;
@@ -112,6 +113,7 @@ public class Player : MonoBehaviour
         fallState = new Player_FallState(this, stateMachine, "jumpFall");
         dashState = new Player_DashState(this, stateMachine, "dash");
         grappleState = new Player_GrappleState(this, stateMachine, "grapple");
+        doubleJumpState = new Player_DoubleJumpState(this, stateMachine, "doubleJump");
     }
 
     private void SetupRope()
@@ -257,6 +259,7 @@ public class Player : MonoBehaviour
         {
             float d = Vector2.Distance(transform.position, gp.transform.position);
             if (d > grappleRange) continue;
+            if (GrappleLineBlocked(gp.transform.position)) continue;   // no grappling through walls
 
             if (d <= bestAnyDist) { bestAnyDist = d; bestAny = gp; }
 
@@ -266,6 +269,28 @@ public class Player : MonoBehaviour
         }
 
         return bestFacing != null ? bestFacing : bestAny;
+    }
+
+    // True when ground or a hazard sits between the player and the target.
+    private bool GrappleLineBlocked(Vector2 target)
+    {
+        foreach (var hit in Physics2D.LinecastAll(transform.position, target))
+        {
+            if (hit.collider == null) continue;
+            if (hit.collider.GetComponentInParent<Player>() != null) continue;      // own body
+            if (hit.collider.GetComponent<GrapplePoint>() != null) continue;        // points never block
+            bool groundHit = (whatIsGround.value & (1 << hit.collider.gameObject.layer)) != 0;
+            bool hazardHit = hit.collider.GetComponent<ParsaProto.PP_Hazard>() != null;
+            if (groundHit || hazardHit) return true;
+        }
+        return false;
+    }
+
+    /// <summary>Rope path check while attached; the grapple state releases when blocked.</summary>
+    public bool IsGrappleLineBlocked()
+    {
+        return AttachedGrapplePoint != null
+            && GrappleLineBlocked(AttachedGrapplePoint.transform.position);
     }
 
     public void AttachGrapple(GrapplePoint point)
@@ -375,9 +400,10 @@ public class Player : MonoBehaviour
 
     private void HandleFlip(float xVelocity)
     {
-        if (xVelocity > 0 && facingRight == false)
+        // dead zone: resting velocity jitters around zero and must never flip us
+        if (xVelocity > 0.01f && facingRight == false)
             Flip();
-        else if (xVelocity < 0 && facingRight)
+        else if (xVelocity < -0.01f && facingRight)
             Flip();
     }
 
