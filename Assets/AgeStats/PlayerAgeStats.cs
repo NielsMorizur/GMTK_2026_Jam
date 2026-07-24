@@ -24,6 +24,8 @@ public class PlayerAgeStats : ScriptableObject
     public float colliderSizeY = 1.75f;
     public float colliderOffsetX = 0.067f;
     public float colliderOffsetY = -0.075f;
+    public float groundCheckWidth = 0.39f;
+    public float groundCheckDistance = 1.15f;
 
     [Header("Visuals")]
     public RuntimeAnimatorController animatorController;

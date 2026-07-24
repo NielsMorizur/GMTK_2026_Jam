@@ -24,5 +24,7 @@ MonoBehaviour:
   colliderSizeY: 0.8
   colliderOffsetX: 0
   colliderOffsetY: -0.075
+  groundCheckWidth: 0.18
+  groundCheckDistance: 0.55
   animatorController: {fileID: 9100000, guid: ed9ed1810a1645b6ba67efdaceef98db, type: 2}
   spriteColor: {r: 1, g: 1, b: 1, a: 1}

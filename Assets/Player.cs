@@ -393,6 +393,9 @@ public class Player : MonoBehaviour
             box2D.offset = new Vector2(Stats.colliderOffsetX, Stats.colliderOffsetY);   
         }
 
+        groundCheckWidth = Stats.groundCheckWidth;
+        groundCheckDistance = Stats.groundCheckDistance;
+
         if (IsGrappling && !Stats.canGrapple)
             stateMachine.ChangeState(fallState);
     }
