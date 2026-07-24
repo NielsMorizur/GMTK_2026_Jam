@@ -24,7 +24,7 @@ namespace ParsaProto
         [Tooltip("How far above the bar the cake rides.")]
         public float heightAboveBar = 0.85f;
         [Tooltip("Value shown at a full bar.")]
-        public int startNumber = 100;
+        public int startNumber = 60;
 
         bool _searched;
 
