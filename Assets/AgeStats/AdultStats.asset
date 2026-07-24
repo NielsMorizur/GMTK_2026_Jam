@@ -20,5 +20,5 @@ MonoBehaviour:
   canDoubleJump: 0
   canDash: 0
   canGrapple: 1
-  animatorController: {fileID: 0}
-  spriteColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
+  animatorController: {fileID: 9100000, guid: 133fcdffdc6f4e7eb47e6610e0818286, type: 2}
+  spriteColor: {r: 1, g: 1, b: 1, a: 1}
