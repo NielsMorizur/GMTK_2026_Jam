@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 
     public Rigidbody2D rb {get; private set; }
 
-    public CapsuleCollider2D capsule2D {get; private set; }
+    public BoxCollider2D box2D {get; private set; }
 
     public PlayerInputSet input {get; private set; }
 
@@ -97,7 +97,7 @@ public class Player : MonoBehaviour
     {
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        capsule2D = GetComponent<CapsuleCollider2D>();
+        box2D = GetComponent<BoxCollider2D>();
         DefaultGravityScale = rb.gravityScale;
         DefaultLinearDamping = rb.linearDamping;
 
@@ -387,10 +387,10 @@ public class Player : MonoBehaviour
         if (sr != null)
             sr.color = Stats.spriteColor;
 
-        if (capsule2D != null)
+        if (box2D != null)
         {
-            capsule2D.size = new Vector2(1f, Stats.colliderSizeY);
-            capsule2D.offset = new Vector2(0, Stats.colliderOffsetY);   
+            box2D.size = new Vector2(Stats.colliderSizeX, Stats.colliderSizeY);
+            box2D.offset = new Vector2(Stats.colliderOffsetX, Stats.colliderOffsetY);   
         }
 
         if (IsGrappling && !Stats.canGrapple)

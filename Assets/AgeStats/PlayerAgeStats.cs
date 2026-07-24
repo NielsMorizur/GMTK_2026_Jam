@@ -20,8 +20,10 @@ public class PlayerAgeStats : ScriptableObject
     public bool canGrapple = false;
 
     [Header("Collider Size")]
-    public float colliderSizeY = 2;
-    public float colliderOffsetY = 0;
+    public float colliderSizeX = 0.85f;
+    public float colliderSizeY = 1.75f;
+    public float colliderOffsetX = 0.067f;
+    public float colliderOffsetY = -0.075f;
 
     [Header("Visuals")]
     public RuntimeAnimatorController animatorController;

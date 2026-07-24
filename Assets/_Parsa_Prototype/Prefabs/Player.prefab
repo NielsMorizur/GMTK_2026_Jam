@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4471833503623918739}
-  - component: {fileID: 2035189913940086691}
   - component: {fileID: 7788990011223344556}
   - component: {fileID: 6463880136291447349}
   - component: {fileID: 5555385806354008482}
@@ -42,43 +41,6 @@ Transform:
   - {fileID: 2340463487518154527}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2035189913940086691
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 382231035341912332}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: 7d66a19c4ed1ef04fb235e3c642e9ad3, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2}
-  m_Direction: 0
 --- !u!61 &7788990011223344556
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -113,7 +75,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.067364305, y: -0.07620376}
+  m_Offset: {x: 0.067, y: -0.075}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -123,7 +85,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8652714, y: 1.7503139}
+  m_Size: {x: 0.85, y: 1.75}
   m_EdgeRadius: 0
 --- !u!50 &6463880136291447349
 Rigidbody2D:
@@ -176,7 +138,7 @@ MonoBehaviour:
   jumpCutMultiplier: 0.5
   minJumpHeightBlocks: 1.25
   dashSpeed: 18
-  dashDuration: 0.15
+  dashDuration: 0.2
   dashCooldown: 0.35
   grappleRange: 6
   swingGravityScale: 3
@@ -338,6 +300,28 @@ MonoBehaviour:
       volume: 1
       pitchJitter: 0.05
   stepInterval: 0.35
+--- !u!114 &7788990011223344561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382231035341912332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ghostStartTint: {r: 0.5, g: 0.5, b: 0.5, a: 0.55}
+  ghostEndTint: {r: 0, g: 0, b: 0, a: 0}
+  ghostInterval: 0.07
+  ghostFadeTime: 0.18
+  freezeDuration: 0.05
+  shakeStrength: 0.12
+  shakeDuration: 0.15
+  doubleJumpFreezeDuration: 0.04
+  doubleJumpShakeStrength: 0.08
+  doubleJumpShakeDuration: 0.12
 --- !u!1 &8264326940950681256
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,15 +471,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6513645713874394900, guid: bc9961e43f7020445a4caf19a81578bd, type: 3}
   m_PrefabInstance: {fileID: 8800000000000000011}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7788990011223344561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 382231035341912332}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e14, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
