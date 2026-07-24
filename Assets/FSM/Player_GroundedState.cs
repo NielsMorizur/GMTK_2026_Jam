@@ -10,7 +10,7 @@ public class Player_GroundedState : EntityState
     {
         base.Update();
 
-        if (rb.linearVelocity.y < 0)
+        if (rb.linearVelocity.y < -0.1f)   // tolerance: resting contact jitters microscopically below zero
             stateMachine.ChangeState(player.fallState);
 
         if (input.Player.Jump.WasPerformedThisFrame() && player.Stats.canJump)

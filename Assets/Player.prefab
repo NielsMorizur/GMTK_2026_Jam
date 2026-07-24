@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4471833503623918739}
   - component: {fileID: 2035189913940086691}
+  - component: {fileID: 7788990011223344556}
   - component: {fileID: 6463880136291447349}
   - component: {fileID: 5555385806354008482}
   m_Layer: 0
@@ -42,7 +43,7 @@ CapsuleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 382231035341912332}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 6200000, guid: 7d66a19c4ed1ef04fb235e3c642e9ad3, type: 2}
@@ -72,6 +73,52 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 2}
   m_Direction: 0
+--- !u!61 &7788990011223344556
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382231035341912332}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 2}
+  m_EdgeRadius: 0
 --- !u!50 &6463880136291447349
 Rigidbody2D:
   serializedVersion: 5
@@ -88,7 +135,7 @@ Rigidbody2D:
   m_LinearDamping: 0.1
   m_AngularDamping: 0.05
   m_GravityScale: 4
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: aa10a1b2c3d4e5f60718293a4b5c6d62, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -116,7 +163,6 @@ MonoBehaviour:
   teenStats: {fileID: 11400000, guid: 371d49e4ec2781f40a088d5ff1ccab3f, type: 2}
   adultStats: {fileID: 11400000, guid: 41d7d72ea4cdd1b4c95c71145a88663a, type: 2}
   elderlyStats: {fileID: 11400000, guid: a7dc37774c66a5e438e1faf61bd50450, type: 2}
-  graphicsRoot: {fileID: 1085887189771691964}
   sr: {fileID: 0}
   coyoteTime: 0.1
   jumpBufferTime: 0.1
@@ -135,7 +181,8 @@ MonoBehaviour:
   grappleSlack: 0.4
   ropeWidth: 0.08
   ropeColor: {r: 0.2, g: 0.2, b: 0.22, a: 1}
-  groundCheckDistance: 0.9
+  groundCheckDistance: 1.1
+  groundCheckWidth: 0.9
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
@@ -221,8 +268,8 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 80e36b27565b35a468d5e4925e846064, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -242,7 +289,7 @@ Animator:
   m_GameObject: {fileID: 8264326940950681256}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: aa10a1b2c3d4e5f60718293a4b5c6dc1, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

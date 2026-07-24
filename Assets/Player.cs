@@ -85,6 +85,8 @@ public class Player : MonoBehaviour
 
     [Header("Collision detection")]
     [SerializeField] private float groundCheckDistance;
+    [Tooltip("Width of the ground probe. Slightly narrower than the collider so wall-hugging never counts as grounded.")]
+    [SerializeField] private float groundCheckWidth = 0.9f;
     [SerializeField] private LayerMask whatIsGround;
     public bool groundDetected {get; private set;}
 
@@ -387,11 +389,16 @@ public class Player : MonoBehaviour
 
     private void HandleCollisionDetection()
     {
-        groundDetected = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
+        // box the width of the feet instead of a single center ray, so ledge
+        // edges and tile seams read correctly
+        groundDetected = Physics2D.BoxCast(transform.position,
+            new Vector2(groundCheckWidth, 0.1f), 0f, Vector2.down,
+            groundCheckDistance, whatIsGround);
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -groundCheckDistance));
+        Gizmos.DrawWireCube(transform.position + new Vector3(0, -groundCheckDistance),
+            new Vector3(groundCheckWidth, 0.1f, 0));
     }
 }

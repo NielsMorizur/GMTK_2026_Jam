@@ -1,34 +1,48 @@
+using System.Reflection;
 using UnityEngine;
 
 namespace ParsaProto
 {
     /// <summary>
-    /// The countdown bar. Resize/move the BACKGROUND sprite and everything
-    /// (fill, chips) re-fits to it, live in the editor too. One chip per form
-    /// sits where its segment begins; the fill drains across the level's
-    /// lifetime, tinted with the current form's color.
+    /// The countdown bar. Two possible data sources:
+    ///  - the team's LevelAgeController + its age sequence (auto-found in the
+    ///    scene if the slot is empty), or
+    ///  - the old prototype PP_AgeLoop (TestParsa).
+    /// Resize/move the BACKGROUND sprite and fill + chips re-fit live, in the
+    /// editor too. Chip colors come from stageColors (age enum order).
+    /// Reads the team controller's private fields via reflection on purpose,
+    /// so no team script needs editing; swap to real getters when they exist.
     /// </summary>
     [ExecuteAlways]
     public class PP_TimeBar : MonoBehaviour
     {
+        [Header("Data source (either one)")]
+        public LevelAgeController ageController;
         public PP_AgeLoop player;
 
+        [Header("Pieces")]
         [Tooltip("The fill sprite that drains (sized by this script).")]
         public Transform fill;
-
         [Tooltip("THE handle: resize/move this and the whole bar follows.")]
         public SpriteRenderer background;
-
-        [Tooltip("One chip per form, in aging order. Replace sprites with head art later.")]
+        [Tooltip("One chip per stage of the level's sequence. Replace sprites with head art later.")]
         public SpriteRenderer[] markers;
 
-        [Tooltip("Fill height as a fraction of the background height.")]
+        [Header("Look")]
         [Range(0.1f, 1f)] public float fillHeightFraction = 0.65f;
-
-        [Tooltip("Chip size as a fraction of the background height.")]
         [Range(0.5f, 3f)] public float chipSizeFraction = 1.15f;
+        [Tooltip("Colors by age, in enum order: Elderly, Adult, Teen, Baby.")]
+        public Color[] stageColors = new Color[]
+        {
+            new Color(0.7f, 0.7f, 0.75f, 1f),
+            new Color(0.3254902f, 0.7137255f, 0.88235295f, 1f),
+            new Color(0.9529412f, 0.5294118f, 0.26666668f, 1f),
+            new Color(0.98f, 0.7f, 0.18f, 1f),
+        };
 
         SpriteRenderer _fillSprite;
+        FieldInfo _fiIndex, _fiSequence, _fiSeconds;
+        bool _searched;
 
         float Width => background != null ? Mathf.Max(background.transform.localScale.x - 0.2f, 0.1f) : 10f;
         float Height => background != null ? background.transform.localScale.y : 0.4f;
@@ -36,6 +50,11 @@ namespace ParsaProto
         void Awake()
         {
             if (fill != null) _fillSprite = fill.GetComponent<SpriteRenderer>();
+            var t = typeof(LevelAgeController);
+            const BindingFlags F = BindingFlags.NonPublic | BindingFlags.Instance;
+            _fiIndex = t.GetField("currentIndex", F);
+            _fiSequence = t.GetField("ageSequence", F);
+            _fiSeconds = t.GetField("secondsPerStage", F);
         }
 
         void Update()
@@ -45,12 +64,54 @@ namespace ParsaProto
 
             if (!Application.isPlaying)
             {
-                // editor preview: full bar, all chips, laid out live while you drag
                 Layout(1f, markers != null ? markers.Length : 0);
+                PreviewColors();
                 return;
             }
 
-            bool hidden = player == null || player.timerPaused || player.freeCycle
+            if (ageController == null && player == null && !_searched)
+            {
+                _searched = true;
+                ageController = Object.FindFirstObjectByType<LevelAgeController>();
+            }
+
+            if (ageController != null) UpdateFromTeamController();
+            else if (player != null) UpdateFromPrototype();
+        }
+
+        // ---------- team path (Level1+) ----------
+        void UpdateFromTeamController()
+        {
+            var seq = _fiSequence != null ? _fiSequence.GetValue(ageController) as System.Array : null;
+            if (seq == null || seq.Length == 0 || _fiIndex == null || _fiSeconds == null) return;
+
+            int count = seq.Length;
+            int idx = Mathf.Clamp((int)_fiIndex.GetValue(ageController), 0, count - 1);
+            float secs = (float)_fiSeconds.GetValue(ageController);
+            if (secs <= 0f) return;
+
+            float remaining = (count - idx - 1) * secs
+                              + Mathf.Clamp(ageController.TimeRemainingInStage, 0f, secs);
+            SetVisible(true);
+            Layout(Mathf.Clamp01(remaining / (count * secs)), count);
+
+            if (_fillSprite != null) _fillSprite.color = StageColor(seq, idx);
+            if (markers != null)
+                for (int i = 0; i < markers.Length && i < count; i++)
+                    if (markers[i] != null) markers[i].color = StageColor(seq, i);
+        }
+
+        Color StageColor(System.Array seq, int i)
+        {
+            int age = System.Convert.ToInt32(seq.GetValue(i));
+            return (stageColors != null && age >= 0 && age < stageColors.Length)
+                ? stageColors[age] : Color.white;
+        }
+
+        // ---------- old prototype path (TestParsa) ----------
+        void UpdateFromPrototype()
+        {
+            bool hidden = player.timerPaused || player.freeCycle
                           || player.forms == null || player.forms.Length == 0;
             SetVisible(!hidden);
             if (hidden) return;
@@ -65,14 +126,13 @@ namespace ParsaProto
 
             if (_fillSprite != null && player.CurrentForm != null)
                 _fillSprite.color = player.CurrentForm.color;
-
             if (markers != null)
                 for (int i = 0; i < markers.Length; i++)
                     if (markers[i] != null && i < m && i < player.forms.Length)
                         markers[i].color = player.forms[i].color;
         }
 
-        /// <summary>Fits fill + chips to the background. f = fraction remaining.</summary>
+        // ---------- shared layout ----------
         void Layout(float f, int chipCount)
         {
             Vector3 c = background.transform.localPosition;
@@ -92,13 +152,21 @@ namespace ParsaProto
                 markers[i].enabled = active;
                 if (!active) continue;
 
-                float frac = (chipCount - i) / (float)chipCount;   // where form i's segment begins
+                float frac = (chipCount - i) / (float)chipCount;   // segment start
                 markers[i].transform.localPosition = new Vector3(
                     c.x - Width * 0.5f + frac * Width, c.y,
                     markers[i].transform.localPosition.z);
                 float s = Height * chipSizeFraction;
                 markers[i].transform.localScale = new Vector3(s, s, 1f);
             }
+        }
+
+        void PreviewColors()
+        {
+            if (markers == null || stageColors == null) return;
+            for (int i = 0; i < markers.Length; i++)
+                if (markers[i] != null && i < stageColors.Length)
+                    markers[i].color = stageColors[i];
         }
 
         void SetVisible(bool on)
