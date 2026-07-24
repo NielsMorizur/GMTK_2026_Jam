@@ -44,6 +44,8 @@ public class Player : MonoBehaviour
     public float jumpBufferTime = 0.1f;
     public float jumpClearance = 0.35f;
     [Range(0f, 1f)] public float jumpCutMultiplier = 0.5f;
+    [Tooltip("Releasing jump early can never leave the jump shorter than this many blocks")]
+    public float minJumpHeightBlocks = 1.25f;
 
     private float coyoteTimer;
     private float jumpBufferTimer;

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Player_JumpState : Player_AiredState
 {
+    private float takeoffVelocity;
+
     public Player_JumpState(Player player, StateMachine stateMachine, string animBoolName) : base(player, stateMachine, animBoolName)
     {
     }
@@ -10,17 +12,30 @@ public class Player_JumpState : Player_AiredState
     {
         base.Enter();
 
-        float jumpVelocity = player.GetJumpVelocity(player.Stats.jumpHeightBlocks);
-        player.SetVelocity(rb.linearVelocity.x, jumpVelocity);
+        takeoffVelocity = player.GetJumpVelocity(player.Stats.jumpHeightBlocks);
+        player.SetVelocity(rb.linearVelocity.x, takeoffVelocity);
     }
 
     public override void Update()
     {
         base.Update();
 
-        // Variable jump height: cut the ascent short if the button is released early.
+        // Variable jump height: cut the ascent short if the button is released
+        // early, but never so short that the jump peaks below minJumpHeightBlocks.
         if (input.Player.Jump.WasReleasedThisFrame() && rb.linearVelocity.y > 0f)
-            player.SetVelocity(rb.linearVelocity.x, rb.linearVelocity.y * player.jumpCutMultiplier);
+        {
+            float vy = rb.linearVelocity.y;
+            float cut = vy * player.jumpCutMultiplier;
+
+            // velocity still needed so height-gained-so-far + remaining rise
+            // adds up to the guaranteed minimum
+            float gravity = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
+            float need = 2f * gravity * player.minJumpHeightBlocks
+                         - (takeoffVelocity * takeoffVelocity - vy * vy);
+            float floor = need > 0f ? Mathf.Sqrt(need) : 0f;
+
+            player.SetVelocity(rb.linearVelocity.x, Mathf.Max(cut, floor));
+        }
 
         if (rb.linearVelocity.y < 0)
             stateMachine.ChangeState(player.fallState);
