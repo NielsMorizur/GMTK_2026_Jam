@@ -59,7 +59,7 @@ public class LevelAgeController : MonoBehaviour
             var sfx = player.GetComponent<ParsaProto.PP_SfxPlayer>();
             if (sfx != null) sfx.PlayDie();
 
-            reset.ResetLevel();
+            reset.DieAndReset();
             return;
         }
 
