@@ -42,6 +42,8 @@ namespace ParsaProto
         Player _player;
         Transform _sprite;
         SpriteRenderer _sr;
+        SpriteRenderer _glow;
+        float _glowAlpha = 0.32f;
         AgeStage _lastAge;
         bool _init;
         bool _swirling;
@@ -54,6 +56,10 @@ namespace ParsaProto
             var anim = GetComponentInChildren<Animator>();
             _sprite = anim != null ? anim.transform : null;
             _sr = _sprite != null ? _sprite.GetComponent<SpriteRenderer>() : null;
+
+            var glowT = transform.Find("PlayerGlow");
+            _glow = glowT != null ? glowT.GetComponent<SpriteRenderer>() : null;
+            if (_glow != null) _glowAlpha = _glow.color.a;   // keep the authored subtlety
         }
 
         void Update()
@@ -61,6 +67,15 @@ namespace ParsaProto
             if (_player == null) return;
 
             var age = _player.CurrentAge;
+
+            // the halo always wears the current form's color
+            int gi = (int)age;
+            if (_glow != null && formColors != null && gi >= 0 && gi < formColors.Length)
+            {
+                Color gc = formColors[gi];
+                gc.a = _glowAlpha;
+                _glow.color = gc;
+            }
             if (!_init)
             {
                 _lastAge = age;
@@ -79,6 +94,10 @@ namespace ParsaProto
             Fire(age);
         }
 
+        /// <summary>True while the swap presentation (swirl + poof) is playing.
+        /// K is ignored during this so a swap can't double-fire.</summary>
+        public bool IsPresenting { get; private set; }
+
         /// <summary>Adopt the current age without firing (level resets).</summary>
         public void ResyncAge()
         {
@@ -91,6 +110,8 @@ namespace ParsaProto
 
         void Fire(AgeStage age)
         {
+            IsPresenting = true;
+
             if (slowMoScale < 1f && !_slowMo)
                 StartCoroutine(SlowMo());
 
@@ -162,6 +183,8 @@ namespace ParsaProto
             var squash = GetComponent<PP_SquashStretch>();
             if (squash != null)
                 squash.Impulse(swapPop);
+
+            IsPresenting = false;
         }
 
         IEnumerator SlowMo()

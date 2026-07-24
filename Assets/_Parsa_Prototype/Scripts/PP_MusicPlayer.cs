@@ -20,7 +20,11 @@ namespace ParsaProto
             }
 
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+
+            // persists only when standalone; as a child (e.g. on the player)
+            // it simply lives and dies with its parent
+            if (transform.parent == null)
+                DontDestroyOnLoad(gameObject);
         }
     }
 }

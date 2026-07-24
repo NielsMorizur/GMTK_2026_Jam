@@ -29,6 +29,12 @@ namespace ParsaProto
         public float shakeStrength = 0.12f;
         public float shakeDuration = 0.15f;
 
+        [Header("Dash tilt")]
+        [Tooltip("Degrees the sprite leans into the dash. 0 = off")]
+        public float dashTiltAngle = 14f;
+        [Tooltip("Degrees per second the lean eases in and out")]
+        public float dashTiltSpeed = 220f;
+
         [Header("Double jump")]
         [Tooltip("Freeze + shake when the double jump fires. 0 = off")]
         public float doubleJumpFreezeDuration = 0.04f;
@@ -38,6 +44,8 @@ namespace ParsaProto
         Player _player;
         Animator _anim;
         SpriteRenderer _sprite;
+        ParticleSystem _trail;
+        float _tilt;
         bool _wasDashing;
         bool _wasDoubleJump;
         float _ghostTimer;
@@ -48,6 +56,9 @@ namespace ParsaProto
             _player = GetComponent<Player>();
             _anim = GetComponentInChildren<Animator>();
             _sprite = GetComponentInChildren<SpriteRenderer>();
+
+            var t = transform.Find("PP_DashTrail");
+            _trail = t != null ? t.GetComponent<ParticleSystem>() : null;
         }
 
         void Update()
@@ -90,6 +101,23 @@ namespace ParsaProto
                     SpawnGhost();
                     _ghostTimer = ghostInterval;
                 }
+            }
+
+            // particle streak only while dashing
+            if (_trail != null)
+            {
+                var em = _trail.emission;
+                em.enabled = dashing;
+            }
+
+            // lean into the dash, ease back upright after. Local -z leans
+            // toward facing on both sides thanks to the 180° flip. Only touch
+            // rotation while leaning so the swap swirl is never fought.
+            float target = dashing ? dashTiltAngle : 0f;
+            if (dashing || _tilt > 0.01f)
+            {
+                _tilt = Mathf.MoveTowards(_tilt, target, dashTiltSpeed * Time.deltaTime);
+                _sprite.transform.localRotation = Quaternion.Euler(0f, 0f, -_tilt);
             }
 
             _wasDashing = dashing;

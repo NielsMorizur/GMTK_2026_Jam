@@ -44,6 +44,8 @@ Transform:
   - {fileID: 1085887189771691964}
   - {fileID: 2340463487518154527}
   - {fileID: 7788990011223344572}
+  - {fileID: 7788990011223344592}
+  - {fileID: 8800000000000000802}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &7788990011223344556
@@ -208,143 +210,145 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 382231035341912332}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   swapForm:
     variations:
-    - {fileID: 8300000, guid: 0ad849718c5e14d23fc4bfe830fa8fe1, type: 3}
-    volume: 1
-    pitchJitter: 0.05
+    - {fileID: 8300000, guid: 448cb48edbe8c614bb26aad11d890b1a, type: 3}
+    volume: 0.39
+    pitchJitter: 0.14
   fart:
     variations:
-    - {fileID: 8300000, guid: e4719c55651853866072718fa92489b6, type: 3}
-    volume: 1
-    pitchJitter: 0.05
+    - {fileID: 8300000, guid: 681582bbab79c8e4380157c465a5d7ac, type: 3}
+    volume: 0.39
+    pitchJitter: 0.14
   grappleAttached:
     variations:
-    - {fileID: 8300000, guid: 67590c8945f0c0c8d430aec421d0e3dc, type: 3}
-    - {fileID: 8300000, guid: 38e62f3266c4c045d91e013a0a823bb8, type: 3}
-    volume: 1
-    pitchJitter: 0.05
+    - {fileID: 8300000, guid: c03b4518faac0ec4ea2eb8609f4db5da, type: 3}
+    volume: 0.39
+    pitchJitter: 0.14
   grappleReleased:
     variations:
-    - {fileID: 8300000, guid: d1a70296dabdad8fce80ecf29a894015, type: 3}
-    volume: 1
-    pitchJitter: 0.05
+    - {fileID: 8300000, guid: ca7459f177c06e842bbe8d94fd01fd9d, type: 3}
+    volume: 0.39
+    pitchJitter: 0.14
   dash:
     variations:
-    - {fileID: 8300000, guid: 56d75911bba9ebf167b3caaf43ee7985, type: 3}
-    volume: 1
-    pitchJitter: 0.05
+    - {fileID: 8300000, guid: e3e9ddc31a29c3b4598312fc6db59717, type: 3}
+    volume: 0.39
+    pitchJitter: 0.14
   walking:
     elderly:
       variations:
-      - {fileID: 8300000, guid: 9203587f1d11fcf1956244c1f417b9b9, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: d5da886abe0a5c340be4441194047235, type: 3}
+      - {fileID: 8300000, guid: 2ab78ae6b4ce1ee45a188a76490bd5ce, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     adult:
       variations:
-      - {fileID: 8300000, guid: cc05af44e2a6759413b9b1ecc28dc447, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: e0486235246ab9e419ab70caf57912f3, type: 3}
+      - {fileID: 8300000, guid: 703c6282470bfb84c83594cb57221931, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     teen:
       variations:
-      - {fileID: 8300000, guid: 5d3ceae60826c5bbe1a82aa4bd00f50a, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: e165f8ccc6c77c04285ac58f62101157, type: 3}
+      - {fileID: 8300000, guid: d343f6cfb061094488dc17558bb3e461, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     baby:
       variations:
-      - {fileID: 8300000, guid: 5067e09f43c3b2e10961af66f307e232, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 3c243e1e58c70664aac90b759184e74a, type: 3}
+      - {fileID: 8300000, guid: d3a3536ac986b434291408027aea35aa, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
   jump:
     elderly:
       variations:
-      - {fileID: 8300000, guid: 9b38cee4e9e0aedb51a67bb4ca53ab34, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 3939e264938172146a603fb15bd0287b, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     adult:
       variations:
-      - {fileID: 8300000, guid: b152f6d807c50f6c1acbe33be24430f8, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 2cc4507e2bf79cf4fb6058a6f58db34d, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     teen:
       variations:
-      - {fileID: 8300000, guid: 7480609152e08ccda4fde6e30d4958a6, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 0b2066405d37c4548858c398952cca67, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     baby:
       variations:
-      - {fileID: 8300000, guid: 6799bebd4346aa8dd42e3b2c7fdac8ca, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 4ae46aa762cace14ab98a57dc7483647, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
   landing:
     elderly:
       variations:
-      - {fileID: 8300000, guid: 32ea5bfdb7f24ebad9dd95de08d95ea8, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 4ea61f596910f3b408df3ac5adb2ee09, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     adult:
       variations:
-      - {fileID: 8300000, guid: 4bec8d2043714d23d1019c9ec03ab604, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 92a4f92c3504beb45857945a9da1c012, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     teen:
       variations:
-      - {fileID: 8300000, guid: 74d3ce923d6ee4fca0ffeb909bbea52b, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: ffdfa59972aac854cb20300d51b24bfa, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     baby:
       variations:
-      - {fileID: 8300000, guid: 272483eef5bf1be2ec99a10418575570, type: 3}
-      - {fileID: 8300000, guid: 954e28448ca6a0add31fdd5a36a2e087, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 68ee5ddad35aed24db414406694fe9c8, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
   die:
     elderly:
       variations:
-      - {fileID: 8300000, guid: 56e0cac50b2dd637a864a6fd777019ed, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: c358e502cb28aa04cb6225925feb8bf5, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     adult:
       variations:
-      - {fileID: 8300000, guid: e51b51b47867dea5004b0fe32e3903f3, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 0dc17c32a9eeee844a0c15436d819dff, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     teen:
       variations:
-      - {fileID: 8300000, guid: 56604d7a7cf668f3981d3a65527845d2, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 6d1d1b8ba6995cc4c8fd26f2f2298a47, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     baby:
       variations:
-      - {fileID: 8300000, guid: 34dd6c1674d43d2dafa041773efb5649, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: e71e4dabe879eb249b7f15b995a748ad, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
   victory:
     elderly:
       variations:
-      - {fileID: 8300000, guid: efdd8791618d76a450273c81e329d3e6, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: ddfb68cb07fc2e14186f70d8393f92cc, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     adult:
       variations:
-      - {fileID: 8300000, guid: 19945b07cf29791813cf05cf0078749c, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: b0c5e2b2c0bf06942aab6e8eb7bb911a, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     teen:
       variations:
-      - {fileID: 8300000, guid: b072e0dc3e8256484287345b2dfb2038, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: 8fb4b88e4864bc440b8f06310051dd06, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
     baby:
       variations:
-      - {fileID: 8300000, guid: 87917f2e4b4916e9992497a4ba2b9149, type: 3}
-      volume: 1
-      pitchJitter: 0.05
+      - {fileID: 8300000, guid: e2cd8fe613bb4054aba2dfd5f22763d7, type: 3}
+      volume: 0.39
+      pitchJitter: 0.14
   stepInterval: 0.35
 --- !u!114 &7788990011223344561
 MonoBehaviour:
@@ -396,7 +400,7 @@ MonoBehaviour:
   springDamping: 14
   jumpStretch: {x: 0.85, y: 1.15}
   gasJumpStretch: {x: 0.72, y: 1.32}
-  dashStretch: {x: 1.3, y: 0.75}
+  dashStretch: {x: 1.45, y: 0.62}
   grappleReleaseStretch: {x: 0.85, y: 1.2}
   landSquashLight: {x: 1.08, y: 0.92}
   landSquashHeavy: {x: 1.35, y: 0.65}
@@ -677,4 +681,171 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 6513645713874394900, guid: bc9961e43f7020445a4caf19a81578bd, type: 3}
   m_PrefabInstance: {fileID: 8800000000000000011}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7788990011223344591
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7788990011223344592}
+  - component: {fileID: 7788990011223344593}
+  - component: {fileID: 7788990011223344594}
+  m_Layer: 0
+  m_Name: Music
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7788990011223344592
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7788990011223344591}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4471833503623918739}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &7788990011223344593
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7788990011223344591}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: bdf22752442e19d409c2bb2ea4289ae8, type: 3}
+  m_Resource: {fileID: 8300000, guid: bdf22752442e19d409c2bb2ea4289ae8, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 0.5
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &7788990011223344594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7788990011223344591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e12, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+--- !u!1001 &8800000000000000801
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4471833503623918739}
+    m_Modifications:
+    - target: {fileID: 8951663507169455475, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70708, type: 3}
+      propertyPath: m_Name
+      value: PP_DashTrail
+      objectReference: {fileID: 0}
+    - target: {fileID: 6513645713874394900, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70708, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6513645713874394900, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70708, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6513645713874394900, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70708, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70708, type: 3}
+--- !u!4 &8800000000000000802 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6513645713874394900, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70708, type: 3}
+  m_PrefabInstance: {fileID: 8800000000000000801}
   m_PrefabAsset: {fileID: 0}

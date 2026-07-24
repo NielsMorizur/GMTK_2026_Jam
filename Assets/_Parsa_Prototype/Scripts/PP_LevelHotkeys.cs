@@ -44,6 +44,10 @@ namespace ParsaProto
                 && _fiTimer != null && _fiSeconds != null
                 && _fiIndex != null && _fiSequence != null)
             {
+                // one swap at a time: K waits out the swap presentation
+                var fx = GetComponent<PP_FormSwapEffects>();
+                if (fx != null && fx.IsPresenting) return;
+
                 // E does nothing on the level's final form
                 var seq = _fiSequence.GetValue(_timer) as System.Array;
                 int idx = (int)_fiIndex.GetValue(_timer);

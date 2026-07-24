@@ -18,8 +18,8 @@ namespace ParsaProto
         public class Sfx
         {
             public AudioClip[] variations;
-            [Range(0f, 1f)] public float volume = 1f;
-            [Range(0f, 0.3f)] public float pitchJitter = 0.05f;
+            [Range(0f, 1f)] public float volume = 0.39f;
+            [Range(0f, 0.3f)] public float pitchJitter = 0.14f;
         }
 
         [System.Serializable]
@@ -55,10 +55,16 @@ namespace ParsaProto
 
         [Header("Footsteps")]
         public float stepInterval = 0.35f;
+        [Tooltip("Steps get their own wider pitch spread")]
+        [Range(0f, 0.4f)] public float stepPitchJitter = 0.13f;
+        [Tooltip("Random per-step volume reduction, 0-1")]
+        [Range(0f, 0.5f)] public float stepVolumeJitter = 0.2f;
 
         Player _player;
         Animator _anim;
         AudioSource _source;
+        AudioSource _stepSource;
+        int _stepIndex;
         AgeStage _lastAge;
         bool _ageInit;
         bool _wasGrounded = true, _wasGrappling, _wasDoubleJump, _wasDash;
@@ -70,6 +76,11 @@ namespace ParsaProto
             _anim = GetComponentInChildren<Animator>();
             _source = gameObject.AddComponent<AudioSource>();
             _source.playOnAwake = false;
+
+            // steps live on their own source so other sounds can't warp
+            // a step that's still playing (shared-source pitch changes do)
+            _stepSource = gameObject.AddComponent<AudioSource>();
+            _stepSource.playOnAwake = false;
         }
 
         void Update()
@@ -124,7 +135,7 @@ namespace ParsaProto
                 _stepTimer -= Time.deltaTime;
                 if (_stepTimer <= 0f)
                 {
-                    Play(walking.For(age));
+                    PlayStep(walking.For(age));
                     _stepTimer = stepInterval;
                 }
             }
@@ -140,6 +151,21 @@ namespace ParsaProto
                 _lastAge = _player.CurrentAge;
                 _ageInit = true;
             }
+        }
+
+        // strict L/R alternation + wider pitch/volume spread, on the
+        // dedicated step source
+        void PlayStep(Sfx sfx)
+        {
+            if (!enabled || _stepSource == null) return;
+            if (sfx == null || sfx.variations == null || sfx.variations.Length == 0) return;
+
+            var clip = sfx.variations[_stepIndex % sfx.variations.Length];
+            _stepIndex++;
+            if (clip == null) return;
+
+            _stepSource.pitch = 1f + Random.Range(-stepPitchJitter, stepPitchJitter);
+            _stepSource.PlayOneShot(clip, sfx.volume * (1f - Random.Range(0f, stepVolumeJitter)));
         }
 
         public void Play(Sfx sfx)

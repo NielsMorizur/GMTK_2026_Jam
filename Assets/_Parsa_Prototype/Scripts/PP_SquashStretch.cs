@@ -22,7 +22,7 @@ namespace ParsaProto
         [Header("Impulses (x = width, y = height)")]
         public Vector2 jumpStretch = new Vector2(0.85f, 1.15f);
         public Vector2 gasJumpStretch = new Vector2(0.72f, 1.32f);
-        public Vector2 dashStretch = new Vector2(1.3f, 0.75f);
+        public Vector2 dashStretch = new Vector2(1.45f, 0.62f);
         public Vector2 grappleReleaseStretch = new Vector2(0.85f, 1.2f);
 
         [Header("Landing")]
