@@ -56,6 +56,12 @@ namespace ParsaProto
                     if (_player != null) _player.SetAge(seq[0]);
                 }
             }
+            else if (_player != null)
+            {
+                // no level timer here (the hub): resetting still means
+                // going back to the elder
+                _player.SetAge(AgeStage.Elderly);
+            }
 
             // frozen until the next input, same as a fresh load
             var gate = GetComponent<PP_TimerGate>();
