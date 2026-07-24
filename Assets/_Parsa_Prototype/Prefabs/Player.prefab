@@ -155,8 +155,8 @@ MonoBehaviour:
   grappleSlack: 0.4
   ropeWidth: 0.08
   ropeColor: {r: 0.2, g: 0.2, b: 0.22, a: 1}
-  groundCheckDistance: 1
-  groundCheckX: 0.062
+  groundCheckDistance: 0.88
+  groundCheckX: 0
   groundCheckWidth: 0.6
   whatIsGround:
     serializedVersion: 2

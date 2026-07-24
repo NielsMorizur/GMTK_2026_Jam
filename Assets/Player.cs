@@ -432,15 +432,25 @@ public class Player : MonoBehaviour
     private void HandleCollisionDetection()
     {
         // box the width of the feet instead of a single center ray, so ledge
-        // edges and tile seams read correctly
-        groundDetected = Physics2D.BoxCast(new Vector2(transform.position.x + groundCheckX, transform.position.y),
+        // edges and tile seams read correctly. Probe from the collider's
+        // world center: per-form offsets and the 180° flip move the collider,
+        // and the probe must move with it. groundCheckX flips with facing.
+        Vector2 origin = box2D != null ? (Vector2)box2D.bounds.center
+                                       : (Vector2)transform.position;
+        origin.x += groundCheckX * FacingDirection;
+
+        groundDetected = Physics2D.BoxCast(origin,
             new Vector2(groundCheckWidth, 0.1f), 0f, Vector2.down,
             groundCheckDistance, whatIsGround);
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(transform.position + new Vector3(groundCheckX, -groundCheckDistance),
+        var box = box2D != null ? box2D : GetComponent<BoxCollider2D>();
+        Vector3 origin = box != null ? (Vector3)box.bounds.center : transform.position;
+        origin.x += groundCheckX * (facingRight ? 1 : -1);
+
+        Gizmos.DrawWireCube(origin + Vector3.down * groundCheckDistance,
             new Vector3(groundCheckWidth, 0.1f, 0));
     }
 }
