@@ -312,6 +312,9 @@ public class Player : MonoBehaviour
         rb.linearDamping = swingLinearDamping;
         IsGrappling = true;
 
+        // the press that attached us must not linger as a buffered jump
+        jumpBufferTimer = 0f;
+
         if (ropeRenderer != null)
             ropeRenderer.enabled = true;
 
