@@ -19,7 +19,9 @@ namespace ParsaProto
                 var sfx = teamPlayer.GetComponent<PP_SfxPlayer>();
                 if (sfx != null) sfx.PlayDie();
 
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                var reset = teamPlayer.GetComponent<PP_LevelReset>();
+                if (reset != null) reset.ResetLevel();
+                else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 return;
             }
 

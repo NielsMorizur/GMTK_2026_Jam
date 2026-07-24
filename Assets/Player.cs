@@ -382,7 +382,14 @@ public class Player : MonoBehaviour
         }
 
         if (Stats.animatorController != null && anim != null)
+        {
             anim.runtimeAnimatorController = Stats.animatorController;
+
+            // the controller swap wipes every animator flag; re-assert the
+            // active state's so the animation doesn't pop to Idle mid-action
+            if (stateMachine != null && stateMachine.currentState != null)
+                stateMachine.currentState.ReassertAnimation();
+        }
 
         if (sr != null)
             sr.color = Stats.spriteColor;

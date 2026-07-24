@@ -45,13 +45,13 @@ namespace ParsaProto
         public Sfx grappleAttached = new Sfx();
         public Sfx grappleReleased = new Sfx();
         public Sfx dash = new Sfx();            // teen
-        public Sfx victory = new Sfx();
 
         [Header("Per form")]
         public FormSfx walking = new FormSfx();
         public FormSfx jump = new FormSfx();
         public FormSfx landing = new FormSfx();
         public FormSfx die = new FormSfx();
+        public FormSfx victory = new FormSfx();
 
         [Header("Footsteps")]
         public float stepInterval = 0.35f;
@@ -129,6 +129,7 @@ namespace ParsaProto
 
         public void Play(Sfx sfx)
         {
+            if (!enabled) return;   // the component checkbox is the mute switch
             var clip = Pick(sfx);
             if (clip == null || _source == null) return;
             _source.pitch = 1f + Random.Range(-sfx.pitchJitter, sfx.pitchJitter);
@@ -138,12 +139,14 @@ namespace ParsaProto
         public void PlayDie() =>
             PlayDetached(die.For(_player != null ? _player.CurrentAge : AgeStage.Elderly));
 
-        public void PlayVictory() => PlayDetached(victory);
+        public void PlayVictory() =>
+            PlayDetached(victory.For(_player != null ? _player.CurrentAge : AgeStage.Elderly));
 
         // plays on a temp object that survives the scene reload following
         // death / level completion
         public void PlayDetached(Sfx sfx)
         {
+            if (!enabled) return;   // muted along with everything else
             var clip = Pick(sfx);
             if (clip == null) return;
             var go = new GameObject("PP_SfxOneShot");

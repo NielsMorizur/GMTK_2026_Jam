@@ -7,9 +7,9 @@ namespace ParsaProto
 {
     /// <summary>
     /// Level hotkeys on the player: R restarts the level (same as dying),
-    /// E skips to the next age stage by fast-forwarding the level timer,
-    /// which reuses the LevelAgeController's own advance logic (so E on the
-    /// final stage resets, exactly like the timer running out).
+    /// K skips to the next age stage by fast-forwarding the level timer,
+    /// which reuses the LevelAgeController's own advance logic (K is inert
+    /// on the final stage).
     /// </summary>
     public class PP_LevelHotkeys : MonoBehaviour
     {
@@ -34,11 +34,13 @@ namespace ParsaProto
 
             if (kb.rKey.wasPressedThisFrame)
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                var reset = GetComponent<PP_LevelReset>();
+                if (reset != null) reset.ResetLevel();
+                else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 return;
             }
 
-            if (kb.eKey.wasPressedThisFrame && _timer != null
+            if (kb.kKey.wasPressedThisFrame && _timer != null
                 && _fiTimer != null && _fiSeconds != null
                 && _fiIndex != null && _fiSequence != null)
             {

@@ -40,4 +40,13 @@ public abstract class EntityState
     {
         anim.SetBool(animBoolName, false);
     }
+
+    /// <summary>
+    /// Re-apply this state's animator flag. Needed after an animator
+    /// controller swap (age change), which resets every flag to false.
+    /// </summary>
+    public void ReassertAnimation()
+    {
+        anim.SetBool(animBoolName, true);
+    }
 }

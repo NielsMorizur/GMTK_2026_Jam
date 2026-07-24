@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 7788990011223344559}
   - component: {fileID: 7788990011223344560}
   - component: {fileID: 7788990011223344561}
+  - component: {fileID: 7788990011223344562}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -203,101 +204,141 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 382231035341912332}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   swapForm:
-    variations: []
+    variations:
+    - {fileID: 8300000, guid: 0ad849718c5e14d23fc4bfe830fa8fe1, type: 3}
     volume: 1
     pitchJitter: 0.05
   fart:
-    variations: []
+    variations:
+    - {fileID: 8300000, guid: e4719c55651853866072718fa92489b6, type: 3}
     volume: 1
     pitchJitter: 0.05
   grappleAttached:
-    variations: []
+    variations:
+    - {fileID: 8300000, guid: 67590c8945f0c0c8d430aec421d0e3dc, type: 3}
+    - {fileID: 8300000, guid: 38e62f3266c4c045d91e013a0a823bb8, type: 3}
     volume: 1
     pitchJitter: 0.05
   grappleReleased:
-    variations: []
+    variations:
+    - {fileID: 8300000, guid: d1a70296dabdad8fce80ecf29a894015, type: 3}
     volume: 1
     pitchJitter: 0.05
   dash:
-    variations: []
-    volume: 1
-    pitchJitter: 0.05
-  victory:
-    variations: []
+    variations:
+    - {fileID: 8300000, guid: 56d75911bba9ebf167b3caaf43ee7985, type: 3}
     volume: 1
     pitchJitter: 0.05
   walking:
     elderly:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 9203587f1d11fcf1956244c1f417b9b9, type: 3}
       volume: 1
       pitchJitter: 0.05
     adult:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: cc05af44e2a6759413b9b1ecc28dc447, type: 3}
       volume: 1
       pitchJitter: 0.05
     teen:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 5d3ceae60826c5bbe1a82aa4bd00f50a, type: 3}
       volume: 1
       pitchJitter: 0.05
     baby:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 5067e09f43c3b2e10961af66f307e232, type: 3}
       volume: 1
       pitchJitter: 0.05
   jump:
     elderly:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 9b38cee4e9e0aedb51a67bb4ca53ab34, type: 3}
       volume: 1
       pitchJitter: 0.05
     adult:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: b152f6d807c50f6c1acbe33be24430f8, type: 3}
       volume: 1
       pitchJitter: 0.05
     teen:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 7480609152e08ccda4fde6e30d4958a6, type: 3}
       volume: 1
       pitchJitter: 0.05
     baby:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 6799bebd4346aa8dd42e3b2c7fdac8ca, type: 3}
       volume: 1
       pitchJitter: 0.05
   landing:
     elderly:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 32ea5bfdb7f24ebad9dd95de08d95ea8, type: 3}
       volume: 1
       pitchJitter: 0.05
     adult:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 4bec8d2043714d23d1019c9ec03ab604, type: 3}
       volume: 1
       pitchJitter: 0.05
     teen:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 74d3ce923d6ee4fca0ffeb909bbea52b, type: 3}
       volume: 1
       pitchJitter: 0.05
     baby:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 272483eef5bf1be2ec99a10418575570, type: 3}
+      - {fileID: 8300000, guid: 954e28448ca6a0add31fdd5a36a2e087, type: 3}
       volume: 1
       pitchJitter: 0.05
   die:
     elderly:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 56e0cac50b2dd637a864a6fd777019ed, type: 3}
       volume: 1
       pitchJitter: 0.05
     adult:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: e51b51b47867dea5004b0fe32e3903f3, type: 3}
       volume: 1
       pitchJitter: 0.05
     teen:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 56604d7a7cf668f3981d3a65527845d2, type: 3}
       volume: 1
       pitchJitter: 0.05
     baby:
-      variations: []
+      variations:
+      - {fileID: 8300000, guid: 34dd6c1674d43d2dafa041773efb5649, type: 3}
+      volume: 1
+      pitchJitter: 0.05
+  victory:
+    elderly:
+      variations:
+      - {fileID: 8300000, guid: efdd8791618d76a450273c81e329d3e6, type: 3}
+      volume: 1
+      pitchJitter: 0.05
+    adult:
+      variations:
+      - {fileID: 8300000, guid: 19945b07cf29791813cf05cf0078749c, type: 3}
+      volume: 1
+      pitchJitter: 0.05
+    teen:
+      variations:
+      - {fileID: 8300000, guid: b072e0dc3e8256484287345b2dfb2038, type: 3}
+      volume: 1
+      pitchJitter: 0.05
+    baby:
+      variations:
+      - {fileID: 8300000, guid: 87917f2e4b4916e9992497a4ba2b9149, type: 3}
       volume: 1
       pitchJitter: 0.05
   stepInterval: 0.35
@@ -564,3 +605,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &7788990011223344562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382231035341912332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e16, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:

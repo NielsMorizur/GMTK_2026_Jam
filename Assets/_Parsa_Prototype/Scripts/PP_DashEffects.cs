@@ -35,14 +35,17 @@ namespace ParsaProto
         public float doubleJumpShakeStrength = 0.08f;
         public float doubleJumpShakeDuration = 0.12f;
 
+        Player _player;
         Animator _anim;
         SpriteRenderer _sprite;
         bool _wasDashing;
         bool _wasDoubleJump;
         float _ghostTimer;
+        static bool _frozen;
 
         void Awake()
         {
+            _player = GetComponent<Player>();
             _anim = GetComponentInChildren<Animator>();
             _sprite = GetComponentInChildren<SpriteRenderer>();
         }
@@ -64,7 +67,9 @@ namespace ParsaProto
             }
             _wasDoubleJump = doubleJumping;
 
-            bool dashing = state.IsName("Dash");
+            // the movement flag, not the animation: age swaps reset the
+            // animator mid-dash and must not retrigger the impact
+            bool dashing = _player != null ? _player.IsDashing : state.IsName("Dash");
 
             if (dashing && !_wasDashing)
             {
@@ -111,10 +116,15 @@ namespace ParsaProto
 
         IEnumerator HitFreeze(float duration)
         {
-            float prev = Time.timeScale;
+            // freezes never stack, and always thaw back to full speed:
+            // capturing the "previous" scale while already frozen once left
+            // the whole game stuck at timescale 0
+            if (_frozen) yield break;
+            _frozen = true;
             Time.timeScale = 0f;
             yield return new WaitForSecondsRealtime(duration);
-            Time.timeScale = prev;
+            Time.timeScale = 1f;
+            _frozen = false;
         }
 
         IEnumerator Shake(Transform cam, float strength, float duration)

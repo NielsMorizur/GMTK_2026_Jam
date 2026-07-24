@@ -4,6 +4,9 @@ public class Player_JumpState : Player_AiredState
 {
     private float takeoffVelocity;
 
+    // the double jump overrides this: it always flies its full height
+    protected virtual bool AllowJumpCut => true;
+
     public Player_JumpState(Player player, StateMachine stateMachine, string animBoolName) : base(player, stateMachine, animBoolName)
     {
     }
@@ -22,7 +25,7 @@ public class Player_JumpState : Player_AiredState
 
         // Variable jump height: cut the ascent short if the button is released
         // early, but never so short that the jump peaks below minJumpHeightBlocks.
-        if (input.Player.Jump.WasReleasedThisFrame() && rb.linearVelocity.y > 0f)
+        if (AllowJumpCut && input.Player.Jump.WasReleasedThisFrame() && rb.linearVelocity.y > 0f)
         {
             float vy = rb.linearVelocity.y;
             float cut = vy * player.jumpCutMultiplier;

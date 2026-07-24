@@ -24,6 +24,18 @@ namespace ParsaProto
 
         void Start()
         {
+            Engage();
+        }
+
+        /// <summary>Re-freeze the timer until the next input (soft resets).</summary>
+        public void Rearm()
+        {
+            Engage();
+        }
+
+        void Engage()
+        {
+            _released = false;
             _controller = FindFirstObjectByType<LevelAgeController>();
 
             // nothing to gate: no controller in this scene, or it has no age
