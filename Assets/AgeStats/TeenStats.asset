@@ -20,11 +20,11 @@ MonoBehaviour:
   canDoubleJump: 0
   canDash: 1
   canGrapple: 0
-  colliderSizeX: 0.85
-  colliderSizeY: 1.75
+  colliderSizeX: 0.65
+  colliderSizeY: 1.65
   colliderOffsetX: 0.067
-  colliderOffsetY: -0.075
-  groundCheckWidth: 0.39
+  colliderOffsetY: -0.1
+  groundCheckWidth: 0.6
   groundCheckDistance: 0.88
   animatorController: {fileID: 9100000, guid: 5e8a89cd657744e6b3e2ecd5c3dfde6c, type: 2}
   spriteColor: {r: 1, g: 1, b: 1, a: 1}
