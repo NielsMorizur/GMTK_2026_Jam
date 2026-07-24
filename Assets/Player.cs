@@ -6,6 +6,8 @@ public class Player : MonoBehaviour
 
     public Rigidbody2D rb {get; private set; }
 
+    public CapsuleCollider2D capsule2D {get; private set; }
+
     public PlayerInputSet input {get; private set; }
 
     private StateMachine stateMachine;
@@ -14,6 +16,8 @@ public class Player : MonoBehaviour
     public Player_MoveState moveState {get; private set;}
     public Player_JumpState jumpState {get; private set;}
     public Player_FallState fallState {get; private set;}
+    public Player_DashState dashState {get; private set;}
+    public Player_GrappleState grappleState {get; private set;}
 
     [Header("Age")]
     [SerializeField] private AgeStage startingAge = AgeStage.Elderly;
@@ -32,19 +36,52 @@ public class Player : MonoBehaviour
     private bool facingRight = true;
     public Vector2 moveInput {get; private set;}
     public bool hasDoubleJump { get; set; } = true;
+    public int FacingDirection => facingRight ? 1 : -1;
 
     [Header("Jump feel")]
-    [Tooltip("Grace window (seconds) to still jump after walking off a ledge.")]
     public float coyoteTime = 0.1f;
-    [Tooltip("Window (seconds) a jump press is remembered before landing.")]
     public float jumpBufferTime = 0.1f;
-    [Tooltip("Extra height added on top of the block height so a jump clears the ledge instead of grazing it.")]
     public float jumpClearance = 0.35f;
-    [Tooltip("How much upward velocity survives when jump is released early. 0 = hard cut, 1 = no cut.")]
     [Range(0f, 1f)] public float jumpCutMultiplier = 0.5f;
 
     private float coyoteTimer;
     private float jumpBufferTimer;
+
+    [Header("Dash")]
+    public float dashSpeed = 18f;
+    public float dashDuration = 0.15f;
+    public float dashCooldown = 0.35f;
+
+    public bool hasAirDash { get; set; } = true;
+    public bool IsDashing { get; set; }
+    public float DefaultGravityScale { get; private set; }
+
+    private float dashCooldownTimer;
+
+    [Header("Grapple")]
+    public float grappleRange = 6f;
+    [Tooltip("Gravity scale while swinging. Lower = slower, floatier swings.")]
+    public float swingGravityScale = 1.8f;
+    [Tooltip("Gentle push from move input while swinging. Keep this small - it's a nudge, not a thruster.")]
+    public float pumpForce = 8f;
+    [Tooltip("Soft speed cap while swinging so pumping can't spiral into unrealistic speeds.")]
+    public float maxSwingSpeed = 9f;
+    [Tooltip("Drag applied only while swinging, so momentum decays naturally instead of building forever.")]
+    [Range(0f, 2f)] public float swingLinearDamping = 0.3f;
+    public float reelSpeed = 3f;
+    public float minReelDistance = 0.6f;
+    [Tooltip("Extra slack added to the rope on attach so it isn't instantly taut - lets momentum ease into the swing instead of jerking to a stop.")]
+    public float grappleSlack = 0.4f;
+    public float ropeWidth = 0.08f;
+    public Color ropeColor = new Color(0.2f, 0.2f, 0.22f, 1f);
+
+    public GrapplePoint CurrentGrappleTarget { get; private set; }
+    public GrapplePoint AttachedGrapplePoint { get; private set; }
+    public DistanceJoint2D GrappleJoint { get; private set; }
+    public bool IsGrappling { get; private set; }
+    public float DefaultLinearDamping { get; private set; }
+
+    private LineRenderer ropeRenderer;
 
     [Header("Collision detection")]
     [SerializeField] private float groundCheckDistance;
@@ -55,9 +92,14 @@ public class Player : MonoBehaviour
     {
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        capsule2D = GetComponent<CapsuleCollider2D>();
+        DefaultGravityScale = rb.gravityScale;
+        DefaultLinearDamping = rb.linearDamping;
 
         if (sr == null)
             sr = GetComponentInChildren<SpriteRenderer>();
+
+        SetupRope();
 
         stateMachine = new StateMachine();
         input = new PlayerInputSet();
@@ -66,6 +108,21 @@ public class Player : MonoBehaviour
         moveState = new Player_MoveState(this, stateMachine, "move");
         jumpState = new Player_JumpState(this, stateMachine, "jumpFall");
         fallState = new Player_FallState(this, stateMachine, "jumpFall");
+        dashState = new Player_DashState(this, stateMachine, "dash");
+        grappleState = new Player_GrappleState(this, stateMachine, "grapple");
+    }
+
+    private void SetupRope()
+    {
+        ropeRenderer = gameObject.AddComponent<LineRenderer>();
+        ropeRenderer.positionCount = 2;
+        ropeRenderer.startWidth = ropeWidth;
+        ropeRenderer.endWidth = ropeWidth;
+        ropeRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        ropeRenderer.startColor = ropeColor;
+        ropeRenderer.endColor = ropeColor;
+        ropeRenderer.sortingOrder = 5;
+        ropeRenderer.enabled = false;
     }
 
     private void OnEnable()
@@ -91,8 +148,27 @@ public class Player : MonoBehaviour
     {
         HandleCollisionDetection();
         HandleJumpTimers();
+        HandleDashTimers();
+        HandleGrappleTargeting();
+        HandleGrappleTrigger();
+        HandleDashTrigger();
         HandleJumpTrigger();
         stateMachine.UpdateActiveState();
+    }
+
+    private void FixedUpdate()
+    {
+        if (IsGrappling)
+            HandleGrapplePhysics();
+    }
+
+    private void LateUpdate()
+    {
+        if (IsGrappling && AttachedGrapplePoint != null && ropeRenderer != null)
+        {
+            ropeRenderer.SetPosition(0, transform.position);
+            ropeRenderer.SetPosition(1, AttachedGrapplePoint.transform.position);
+        }
     }
 
     private void HandleJumpTimers()
@@ -107,17 +183,145 @@ public class Player : MonoBehaviour
 
     private void HandleJumpTrigger()
     {
+        if (IsDashing || IsGrappling) return;
+
         if (jumpBufferTimer > 0f && coyoteTimer > 0f && Stats != null && Stats.canJump)
         {
             jumpBufferTimer = 0f;
             coyoteTimer = 0f;
-            hasDoubleJump = true; // fresh airborne trip, restore the double jump
+            hasDoubleJump = true;
             stateMachine.ChangeState(jumpState);
         }
     }
 
-    // v = sqrt(2 * g * h), using the Rigidbody2D's own gravity scale so jump
-    // height in "blocks" stays accurate to however gravity is tuned in the Inspector.
+    private void HandleDashTimers()
+    {
+        dashCooldownTimer -= Time.deltaTime;
+
+        if (groundDetected)
+            hasAirDash = true;
+    }
+
+    private void HandleDashTrigger()
+    {
+        if (IsDashing || IsGrappling) return;
+
+        bool canUseDash = Stats != null && Stats.canDash
+                           && dashCooldownTimer <= 0f
+                           && (groundDetected || hasAirDash);
+
+        if (canUseDash && input.Player.Dash.WasPerformedThisFrame())
+        {
+            dashCooldownTimer = dashCooldown;
+
+            if (!groundDetected)
+                hasAirDash = false;
+
+            stateMachine.ChangeState(dashState);
+        }
+    }
+
+    private void HandleGrappleTargeting()
+    {
+        if (IsGrappling)
+        {
+            CurrentGrappleTarget = AttachedGrapplePoint;
+            return;
+        }
+
+        bool canLookForTarget = Stats != null && Stats.canGrapple && !groundDetected;
+        CurrentGrappleTarget = canLookForTarget ? FindGrappleTarget() : null;
+    }
+
+    private void HandleGrappleTrigger()
+    {
+        if (IsGrappling || IsDashing) return;
+        if (groundDetected) return;
+        if (Stats == null || !Stats.canGrapple) return;
+        if (CurrentGrappleTarget == null) return;
+
+        if (input.Player.Jump.WasPerformedThisFrame())
+            AttachGrapple(CurrentGrappleTarget);
+    }
+
+    private GrapplePoint FindGrappleTarget()
+    {
+        GrapplePoint bestFacing = null, bestAny = null;
+        float bestFacingDist = grappleRange, bestAnyDist = grappleRange;
+        int facing = FacingDirection;
+
+        foreach (var gp in FindObjectsByType<GrapplePoint>(FindObjectsSortMode.None))
+        {
+            float d = Vector2.Distance(transform.position, gp.transform.position);
+            if (d > grappleRange) continue;
+
+            if (d <= bestAnyDist) { bestAnyDist = d; bestAny = gp; }
+
+            float dx = gp.transform.position.x - transform.position.x;
+            bool inFacing = dx == 0f || Mathf.Sign(dx) == facing;
+            if (inFacing && d <= bestFacingDist) { bestFacingDist = d; bestFacing = gp; }
+        }
+
+        return bestFacing != null ? bestFacing : bestAny;
+    }
+
+    public void AttachGrapple(GrapplePoint point)
+    {
+        AttachedGrapplePoint = point;
+
+        float currentDistance = Vector2.Distance(transform.position, point.transform.position);
+
+        GrappleJoint = gameObject.AddComponent<DistanceJoint2D>();
+        GrappleJoint.autoConfigureConnectedAnchor = false;
+        GrappleJoint.connectedAnchor = point.transform.position;
+        GrappleJoint.distance = currentDistance + grappleSlack; // slack prevents an instant hard stop
+        GrappleJoint.maxDistanceOnly = true;
+        GrappleJoint.enableCollision = true;
+
+        rb.gravityScale = swingGravityScale;
+        rb.linearDamping = swingLinearDamping;
+        IsGrappling = true;
+
+        if (ropeRenderer != null)
+            ropeRenderer.enabled = true;
+
+        stateMachine.ChangeState(grappleState);
+    }
+
+    private void HandleGrapplePhysics()
+    {
+        if (GrappleJoint == null) return;
+
+        // Gentle pump - nudges the swing, doesn't override it.
+        rb.AddForce(new Vector2(moveInput.x * pumpForce, 0f), ForceMode2D.Force);
+
+        // Holding up reels the rope in.
+        if (moveInput.y > 0f)
+        {
+            GrappleJoint.distance = Mathf.Max(minReelDistance,
+                GrappleJoint.distance - reelSpeed * Time.fixedDeltaTime);
+        }
+
+        // Soft cap so pumping can't spiral the swing into unrealistic speed.
+        if (rb.linearVelocity.magnitude > maxSwingSpeed)
+            rb.linearVelocity = rb.linearVelocity.normalized * maxSwingSpeed;
+    }
+
+    public void ReleaseGrapple()
+    {
+        if (GrappleJoint != null)
+            Destroy(GrappleJoint);
+
+        GrappleJoint = null;
+        AttachedGrapplePoint = null;
+        rb.gravityScale = DefaultGravityScale;
+        rb.linearDamping = DefaultLinearDamping;
+        IsGrappling = false;
+
+        if (ropeRenderer != null)
+            ropeRenderer.enabled = false;
+    }
+
     public float GetJumpVelocity(float heightInBlocks)
     {
         float gravity = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
@@ -149,6 +353,15 @@ public class Player : MonoBehaviour
 
         if (sr != null)
             sr.color = Stats.spriteColor;
+
+        if (capsule2D != null)
+        {
+            capsule2D.size = new Vector2(1f, Stats.colliderSizeY);
+            capsule2D.offset = new Vector2(0, Stats.colliderOffsetY);   
+        }
+
+        if (IsGrappling && !Stats.canGrapple)
+            stateMachine.ChangeState(fallState);
     }
 
     public void SetVelocity(float xVelocity, float yVelocity)

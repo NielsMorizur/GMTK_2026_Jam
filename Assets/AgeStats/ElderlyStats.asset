@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: ElderlyStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAgeStats
   moveSpeed: 7
-  jumpForce: 10
   inAirMoveMultiplier: 1
+  jumpHeightBlocks: 2
   canJump: 1
   canPush: 0
   canDoubleJump: 1
+  canDash: 0
   animatorController: {fileID: 0}
   spriteColor: {r: 0, g: 0, b: 0, a: 1}

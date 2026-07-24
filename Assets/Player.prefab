@@ -69,8 +69,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.00000011920929, y: 0.009841025}
-  m_Size: {x: 0.9723675, y: 1.9775382}
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1, y: 2}
   m_Direction: 0
 --- !u!50 &6463880136291447349
 Rigidbody2D:
@@ -121,6 +121,19 @@ MonoBehaviour:
   jumpBufferTime: 0.1
   jumpClearance: 0.35
   jumpCutMultiplier: 0.5
+  dashSpeed: 18
+  dashDuration: 0.15
+  dashCooldown: 0.35
+  grappleRange: 6
+  swingGravityScale: 3
+  pumpForce: 10
+  maxSwingSpeed: 14
+  swingLinearDamping: 0.15
+  reelSpeed: 8
+  minReelDistance: 0.6
+  grappleSlack: 0.4
+  ropeWidth: 0.08
+  ropeColor: {r: 0.2, g: 0.2, b: 0.22, a: 1}
   groundCheckDistance: 0.9
   whatIsGround:
     serializedVersion: 2

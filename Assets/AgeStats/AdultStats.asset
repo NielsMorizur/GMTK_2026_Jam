@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: AdultStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAgeStats
   moveSpeed: 8
-  jumpForce: 12
   inAirMoveMultiplier: 1
+  jumpHeightBlocks: 2
   canJump: 1
   canPush: 1
   canDoubleJump: 0
+  canDash: 0
+  canGrapple: 1
   animatorController: {fileID: 0}
   spriteColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
