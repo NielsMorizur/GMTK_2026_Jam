@@ -45,6 +45,14 @@ namespace ParsaProto
         /// <summary>Remaining fraction of the whole level, 1 at start, 0 at time's up. The cake rides this.</summary>
         public float Progress01 { get; private set; } = 1f;
 
+        // the age scale: each form owns a band on 100..0
+        // (enum order: Elderly, Adult, Teen, Baby)
+        static readonly float[] AgeBandStart = { 100f, 65f, 30f, 15f };
+        static readonly float[] AgeBandEnd = { 65f, 30f, 15f, 0f };
+
+        /// <summary>His current age on the 100-0 scale. The cake shows this.</summary>
+        public float CurrentAgeValue { get; private set; } = 100f;
+
         SpriteRenderer _fillSprite;
         FieldInfo _fiIndex, _fiSequence, _fiSeconds;
         bool _searched;
@@ -69,7 +77,7 @@ namespace ParsaProto
 
             if (!Application.isPlaying)
             {
-                Layout(1f, markers != null ? markers.Length : 0);
+                Layout(1f, EvenFracs(markers != null ? markers.Length : 0));
                 PreviewColors();
                 return;
             }
@@ -95,10 +103,19 @@ namespace ParsaProto
             float secs = (float)_fiSeconds.GetValue(ageController);
             if (secs <= 0f) return;
 
+            // the NUMBER follows the age bands: it falls through the current
+            // form's band as the stage elapses, so it drops 35 counts in an
+            // elderly/adult stage but only 15 in teen/baby
+            int curForm = Mathf.Clamp(System.Convert.ToInt32(seq.GetValue(idx)), 0, 3);
+            float stageElapsed = 1f - Mathf.Clamp01(ageController.TimeRemainingInStage / secs);
+            CurrentAgeValue = Mathf.Lerp(AgeBandStart[curForm], AgeBandEnd[curForm], stageElapsed);
+
+            // the BAR stays time-based: markers evenly spaced, cake slides at
+            // constant speed, every stage covers the same stretch of track
             float remaining = (count - idx - 1) * secs
                               + Mathf.Clamp(ageController.TimeRemainingInStage, 0f, secs);
             SetVisible(true);
-            Layout(Mathf.Clamp01(remaining / (count * secs)), count);
+            Layout(Mathf.Clamp01(remaining / (count * secs)), EvenFracs(count));
 
             if (_fillSprite != null) _fillSprite.color = StageColor(seq, idx);
             if (markers != null)
@@ -143,7 +160,9 @@ namespace ParsaProto
 
             float remaining = (m - player.FormIndex - 1) * player.formDuration
                               + Mathf.Max(player.TimeLeftInForm, 0f);
-            Layout(Mathf.Clamp01(remaining / total), m);
+            float pf = Mathf.Clamp01(remaining / total);
+            CurrentAgeValue = pf * 100f;
+            Layout(pf, EvenFracs(m));
 
             if (_fillSprite != null && player.CurrentForm != null)
                 _fillSprite.color = player.CurrentForm.color;
@@ -154,7 +173,15 @@ namespace ParsaProto
         }
 
         // ---------- shared layout ----------
-        void Layout(float f, int chipCount)
+        static float[] EvenFracs(int n)
+        {
+            var fr = new float[Mathf.Max(0, n)];
+            for (int i = 0; i < fr.Length; i++)
+                fr[i] = (n - i) / (float)n;
+            return fr;
+        }
+
+        void Layout(float f, float[] markerFracs)
         {
             Progress01 = f;
             Vector3 c = background.transform.localPosition;
@@ -167,6 +194,7 @@ namespace ParsaProto
             }
 
             if (markers == null) return;
+            int chipCount = markerFracs != null ? markerFracs.Length : 0;
             for (int i = 0; i < markers.Length; i++)
             {
                 if (markers[i] == null) continue;
@@ -174,9 +202,8 @@ namespace ParsaProto
                 markers[i].enabled = active;
                 if (!active) continue;
 
-                float frac = (chipCount - i) / (float)chipCount;   // segment start
                 markers[i].transform.localPosition = new Vector3(
-                    c.x - Width * 0.5f + frac * Width, c.y,
+                    c.x - Width * 0.5f + markerFracs[i] * Width, c.y,
                     markers[i].transform.localPosition.z);
                 float s = Height * chipSizeFraction;
                 markers[i].transform.localScale = new Vector3(s, s, 1f);

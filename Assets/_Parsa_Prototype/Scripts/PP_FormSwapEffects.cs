@@ -29,6 +29,10 @@ namespace ParsaProto
         [Tooltip("Squash-stretch pop as he lands in the new form")]
         public Vector2 swapPop = new Vector2(1.25f, 1.25f);
 
+        [Header("Color flash")]
+        [Tooltip("Seconds the sprite glows in the new form's color before fading back")]
+        public float flashDuration = 0.35f;
+
         [Header("Slow-mo beat")]
         [Tooltip("Game speed during the beat; 1 = off")]
         public float slowMoScale = 0.3f;
@@ -37,9 +41,11 @@ namespace ParsaProto
 
         Player _player;
         Transform _sprite;
+        SpriteRenderer _sr;
         AgeStage _lastAge;
         bool _init;
         bool _swirling;
+        bool _flashing;
         static bool _slowMo;
 
         void Awake()
@@ -47,6 +53,7 @@ namespace ParsaProto
             _player = GetComponent<Player>();
             var anim = GetComponentInChildren<Animator>();
             _sprite = anim != null ? anim.transform : null;
+            _sr = _sprite != null ? _sprite.GetComponent<SpriteRenderer>() : null;
         }
 
         void Update()
@@ -88,6 +95,34 @@ namespace ParsaProto
                 StartCoroutine(SlowMo());
 
             StartCoroutine(SwirlAndPoof(age));
+
+            if (flashDuration > 0f && !_flashing)
+                StartCoroutine(ColorFlash(age));
+        }
+
+        IEnumerator ColorFlash(AgeStage age)
+        {
+            int i = (int)age;
+            if (_sr == null || formColors == null || i < 0 || i >= formColors.Length)
+                yield break;
+
+            _flashing = true;
+
+            // glow in the incoming form's color, fade back to normal.
+            // SetAge already applied the form's resting color; that's home.
+            Color home = _sr.color;
+            Color flash = formColors[i];
+            flash.a = home.a;
+
+            float t = 0f;
+            while (t < flashDuration && _sr != null)
+            {
+                t += Time.unscaledDeltaTime;
+                _sr.color = Color.Lerp(flash, home, Mathf.Clamp01(t / flashDuration));
+                yield return null;
+            }
+            if (_sr != null) _sr.color = home;
+            _flashing = false;
         }
 
         IEnumerator SwirlAndPoof(AgeStage age)

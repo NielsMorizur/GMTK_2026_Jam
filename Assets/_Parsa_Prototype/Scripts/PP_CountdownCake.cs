@@ -23,8 +23,6 @@ namespace ParsaProto
         public float digitSpacing = 0.34f;
         [Tooltip("How far above the bar the cake rides.")]
         public float heightAboveBar = 0.85f;
-        [Tooltip("Value shown at a full bar.")]
-        public int startNumber = 60;
 
         bool _searched;
 
@@ -53,7 +51,8 @@ namespace ParsaProto
                 b.center.y + heightAboveBar,
                 bar.background.transform.position.z);
 
-            ShowNumber(Mathf.CeilToInt(f * startNumber));
+            // the candle shows his actual age on the 100-0 scale
+            ShowNumber(Mathf.CeilToInt(bar.CurrentAgeValue));
         }
 
         void ShowNumber(int n)
