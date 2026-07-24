@@ -77,7 +77,7 @@ namespace ParsaProto
             if (ageController == null && player == null && !_searched)
             {
                 _searched = true;
-                ageController = Object.FindFirstObjectByType<LevelAgeController>();
+                ageController = Object.FindAnyObjectByType<LevelAgeController>();
             }
 
             if (ageController != null) UpdateFromTeamController();

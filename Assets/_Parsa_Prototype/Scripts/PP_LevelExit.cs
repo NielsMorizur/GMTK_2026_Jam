@@ -26,7 +26,7 @@ namespace ParsaProto
             if (GameManager.Instance != null)
                 GameManager.Instance.LevelComplete();
 
-            var timer = Object.FindFirstObjectByType<LevelAgeController>();
+            var timer = Object.FindAnyObjectByType<LevelAgeController>();
             if (timer != null)
                 timer.OnLevelCompleted();
 

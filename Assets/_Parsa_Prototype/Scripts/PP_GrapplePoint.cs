@@ -28,7 +28,7 @@ namespace ParsaProto
 
         void Start()
         {
-            _grapple = Object.FindFirstObjectByType<PP_Grapple>();
+            _grapple = Object.FindAnyObjectByType<PP_Grapple>();
         }
 
         void Update()

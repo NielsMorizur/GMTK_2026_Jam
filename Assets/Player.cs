@@ -257,7 +257,7 @@ public class Player : MonoBehaviour
         float bestFacingDist = grappleRange, bestAnyDist = grappleRange;
         int facing = FacingDirection;
 
-        foreach (var gp in FindObjectsByType<GrapplePoint>(FindObjectsSortMode.None))
+        foreach (var gp in FindObjectsByType<GrapplePoint>())
         {
             float d = Vector2.Distance(transform.position, gp.transform.position);
             if (d > grappleRange) continue;

@@ -115,7 +115,7 @@ namespace ParsaProto
             float bestFacingDist = range, bestAnyDist = range;
             int facing = _ctrl.Facing;
 
-            foreach (var gp in Object.FindObjectsByType<PP_GrapplePoint>(FindObjectsSortMode.None))
+            foreach (var gp in Object.FindObjectsByType<PP_GrapplePoint>())
             {
                 float d = Vector2.Distance(transform.position, gp.transform.position);
                 if (d > range) continue;

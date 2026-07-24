@@ -18,7 +18,6 @@ public class Player_MoveState : Player_GroundedState
     {
         base.FixedUpdate();
 
-        Debug.Log(rb.linearVelocity.x);
         player.SetVelocity(player.moveInput.x * player.Stats.moveSpeed, rb.linearVelocity.y);
     }
 }

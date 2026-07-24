@@ -77,9 +77,14 @@ namespace ParsaProto
             if (_player == null) return;
             var age = _player.CurrentAge;
 
-            // swap form (skip the initial assignment on level load)
+            // swap form (skip the initial assignment on level load; backward
+            // changes are level resets, not real swaps)
             if (!_ageInit) { _lastAge = age; _ageInit = true; }
-            else if (age != _lastAge) { Play(swapForm); _lastAge = age; }
+            else if (age != _lastAge)
+            {
+                if ((int)age > (int)_lastAge) Play(swapForm);
+                _lastAge = age;
+            }
 
             bool grounded = _player.groundDetected;
 
@@ -125,6 +130,16 @@ namespace ParsaProto
             }
             else
                 _stepTimer = 0f;
+        }
+
+        /// <summary>Adopt the current age without playing the swap sound (level resets).</summary>
+        public void ResyncAge()
+        {
+            if (_player != null)
+            {
+                _lastAge = _player.CurrentAge;
+                _ageInit = true;
+            }
         }
 
         public void Play(Sfx sfx)

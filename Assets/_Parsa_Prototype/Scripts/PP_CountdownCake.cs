@@ -35,7 +35,7 @@ namespace ParsaProto
             if (bar == null && !_searched)
             {
                 _searched = true;
-                bar = Object.FindFirstObjectByType<PP_TimeBar>();
+                bar = Object.FindAnyObjectByType<PP_TimeBar>();
             }
             if (bar == null || bar.background == null) return;
 

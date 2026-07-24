@@ -1086,6 +1086,34 @@ PrefabInstance:
       propertyPath: freezeDuration
       value: 0.03
       objectReference: {fileID: 0}
+    - target: {fileID: 7788990011223344564, guid: 1af1c270a6209594e9ad4ddc60931469, type: 3}
+      propertyPath: zoomPunch
+      value: 0.98
+      objectReference: {fileID: 0}
+    - target: {fileID: 7788990011223344564, guid: 1af1c270a6209594e9ad4ddc60931469, type: 3}
+      propertyPath: burstScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7788990011223344564, guid: 1af1c270a6209594e9ad4ddc60931469, type: 3}
+      propertyPath: zoomReturnTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7788990011223344564, guid: 1af1c270a6209594e9ad4ddc60931469, type: 3}
+      propertyPath: formColors.Array.data[0].a
+      value: 0.72156864
+      objectReference: {fileID: 0}
+    - target: {fileID: 7788990011223344564, guid: 1af1c270a6209594e9ad4ddc60931469, type: 3}
+      propertyPath: formColors.Array.data[1].a
+      value: 0.7372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 7788990011223344564, guid: 1af1c270a6209594e9ad4ddc60931469, type: 3}
+      propertyPath: formColors.Array.data[2].a
+      value: 0.7176471
+      objectReference: {fileID: 0}
+    - target: {fileID: 7788990011223344564, guid: 1af1c270a6209594e9ad4ddc60931469, type: 3}
+      propertyPath: formColors.Array.data[3].a
+      value: 0.6392157
+      objectReference: {fileID: 0}
     - target: {fileID: 7788990011223344572, guid: 1af1c270a6209594e9ad4ddc60931469, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.85776997
@@ -3362,6 +3390,24 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70706, type: 3}
+--- !u!1001 &8800000000000000601
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e6f7a8b9c0d1e2f3a4b5c6d7e8f90901, type: 3}
+--- !u!224 &8800000000000000602 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5700000000000000002, guid: e6f7a8b9c0d1e2f3a4b5c6d7e8f90901, type: 3}
+  m_PrefabInstance: {fileID: 8800000000000000601}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3378,3 +3424,4 @@ SceneRoots:
   - {fileID: 85242635}
   - {fileID: 642399980}
   - {fileID: 1461550742}
+  - {fileID: 8800000000000000602}

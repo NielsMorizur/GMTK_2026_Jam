@@ -18,7 +18,7 @@ namespace ParsaProto
 
         void Start()
         {
-            _timer = Object.FindFirstObjectByType<LevelAgeController>();
+            _timer = Object.FindAnyObjectByType<LevelAgeController>();
             var t = typeof(LevelAgeController);
             const BindingFlags F = BindingFlags.NonPublic | BindingFlags.Instance;
             _fiTimer = t.GetField("timer", F);

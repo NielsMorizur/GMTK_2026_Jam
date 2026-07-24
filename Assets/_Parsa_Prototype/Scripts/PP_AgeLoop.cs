@@ -224,9 +224,9 @@ namespace ParsaProto
         {
             ReturnToStart();
             ApplyForm(0);
-            foreach (var w in Object.FindObjectsByType<PP_Walker>(FindObjectsSortMode.None))
+            foreach (var w in Object.FindObjectsByType<PP_Walker>())
                 w.ResetToStart();
-            foreach (var b in Object.FindObjectsByType<PP_PushBlock>(FindObjectsSortMode.None))
+            foreach (var b in Object.FindObjectsByType<PP_PushBlock>())
                 b.ResetToStart();
 
             Time.timeScale = 1f;

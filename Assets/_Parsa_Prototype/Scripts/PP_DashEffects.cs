@@ -61,7 +61,8 @@ namespace ParsaProto
             {
                 if (doubleJumpFreezeDuration > 0f)
                     StartCoroutine(HitFreeze(doubleJumpFreezeDuration));
-                if (doubleJumpShakeStrength > 0f && Camera.main != null)
+                if (doubleJumpShakeStrength > 0f && Camera.main != null
+                    && !PP_Settings.ScreenShakeDisabled)
                     StartCoroutine(Shake(Camera.main.transform,
                         doubleJumpShakeStrength, doubleJumpShakeDuration));
             }
@@ -76,7 +77,8 @@ namespace ParsaProto
                 _ghostTimer = 0f;
                 if (freezeDuration > 0f)
                     StartCoroutine(HitFreeze(freezeDuration));
-                if (shakeStrength > 0f && Camera.main != null)
+                if (shakeStrength > 0f && Camera.main != null
+                    && !PP_Settings.ScreenShakeDisabled)
                     StartCoroutine(Shake(Camera.main.transform, shakeStrength, shakeDuration));
             }
 
@@ -119,11 +121,11 @@ namespace ParsaProto
             // freezes never stack, and always thaw back to full speed:
             // capturing the "previous" scale while already frozen once left
             // the whole game stuck at timescale 0
-            if (_frozen) yield break;
+            if (_frozen || PP_PauseMenu.IsOpen) yield break;
             _frozen = true;
             Time.timeScale = 0f;
             yield return new WaitForSecondsRealtime(duration);
-            Time.timeScale = 1f;
+            Time.timeScale = PP_PauseMenu.IsOpen ? 0f : 1f;
             _frozen = false;
         }
 

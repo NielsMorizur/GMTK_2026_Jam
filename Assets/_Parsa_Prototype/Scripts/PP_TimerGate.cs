@@ -36,7 +36,7 @@ namespace ParsaProto
         void Engage()
         {
             _released = false;
-            _controller = FindFirstObjectByType<LevelAgeController>();
+            _controller = FindAnyObjectByType<LevelAgeController>();
 
             // nothing to gate: no controller in this scene, or it has no age
             // sequence (its own Start already parked the timer permanently)

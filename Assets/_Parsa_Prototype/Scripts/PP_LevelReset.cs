@@ -32,7 +32,7 @@ namespace ParsaProto
 
         public void ResetLevel()
         {
-            var spawn = Object.FindFirstObjectByType<PP_SpawnPoint>();
+            var spawn = Object.FindAnyObjectByType<PP_SpawnPoint>();
             transform.position = spawn != null ? spawn.transform.position : _fallbackSpawn;
 
             if (_player != null)
@@ -43,7 +43,7 @@ namespace ParsaProto
                 _player.hasAirDash = true;
             }
 
-            var ctrl = Object.FindFirstObjectByType<LevelAgeController>();
+            var ctrl = Object.FindAnyObjectByType<LevelAgeController>();
             if (ctrl != null && FiIndex != null && FiTimer != null && FiActive != null)
             {
                 FiIndex.SetValue(ctrl, 0);
@@ -60,6 +60,12 @@ namespace ParsaProto
             // frozen until the next input, same as a fresh load
             var gate = GetComponent<PP_TimerGate>();
             if (gate != null) gate.Rearm();
+
+            // going back to stage one is not a dramatic "form swap"
+            var swapFx = GetComponent<PP_FormSwapEffects>();
+            if (swapFx != null) swapFx.ResyncAge();
+            var sfx = GetComponent<PP_SfxPlayer>();
+            if (sfx != null) sfx.ResyncAge();
         }
     }
 }
