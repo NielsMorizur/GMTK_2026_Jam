@@ -3,38 +3,97 @@ using UnityEngine;
 namespace ParsaProto
 {
     /// <summary>
-    /// Birthday-cake countdown: the numbered candle on the cake shows the
-    /// seconds left in the current form (values above 9 show the 9 candle).
-    /// Runs alongside PP_TimeBar while it's being tweaked; meant to replace
-    /// it eventually. Cake and Candle are plain child sprites, move and
-    /// scale them freely in the prefab.
+    /// The countdown cake rides the TimeBar: it slides along the track as the
+    /// level timer (Niels' controller, via the bar) runs down, showing a
+    /// number that counts from 100 to 0. Three candle digits at 100, two from
+    /// 99, one from 9. Purely visual, drives nothing.
     /// </summary>
     public class PP_CountdownCake : MonoBehaviour
     {
         [Tooltip("Auto-found in the scene when empty.")]
-        public LevelAgeController ageController;
+        public PP_TimeBar bar;
         [Tooltip("Digit sprites 0-9, in order.")]
         public Sprite[] digits = new Sprite[10];
-        [Tooltip("The renderer showing the candle digit.")]
-        public SpriteRenderer candle;
+        [Tooltip("Left-to-right digit renderers on the cake (3 covers 100).")]
+        public SpriteRenderer[] digitRenderers = new SpriteRenderer[3];
+        [Tooltip("The cake body renderer.")]
+        public SpriteRenderer cake;
+        [Tooltip("Flame particle objects, one per digit; shown with their digit.")]
+        public GameObject[] flames = new GameObject[3];
+
+        [Header("Look")]
+        public float digitSpacing = 0.34f;
+        [Tooltip("How far above the bar the cake rides.")]
+        public float heightAboveBar = 0.85f;
+        [Tooltip("Value shown at a full bar.")]
+        public int startNumber = 100;
 
         bool _searched;
 
         void Update()
         {
-            if (candle == null || !Application.isPlaying) return;
+            if (!Application.isPlaying) return;
 
-            if (ageController == null && !_searched)
+            if (bar == null && !_searched)
             {
                 _searched = true;
-                ageController = Object.FindFirstObjectByType<LevelAgeController>();
+                bar = Object.FindFirstObjectByType<PP_TimeBar>();
             }
-            if (ageController == null) return;
+            if (bar == null || bar.background == null) return;
 
-            int remaining = Mathf.CeilToInt(ageController.TimeRemainingInStage);
-            int shown = Mathf.Clamp(remaining, 0, 9);
-            if (digits != null && shown < digits.Length && digits[shown] != null)
-                candle.sprite = digits[shown];
+            bool visible = bar.background.enabled;
+            SetVisible(visible);
+            if (!visible) return;
+
+            float f = bar.Progress01;
+
+            // ride the track: full time = right end, time's up = left end,
+            // matching the direction the fill drains
+            var b = bar.background.bounds;
+            transform.position = new Vector3(
+                Mathf.Lerp(b.min.x, b.max.x, f),
+                b.center.y + heightAboveBar,
+                bar.background.transform.position.z);
+
+            ShowNumber(Mathf.CeilToInt(f * startNumber));
+        }
+
+        void ShowNumber(int n)
+        {
+            n = Mathf.Clamp(n, 0, 999);
+            int count = n >= 100 ? 3 : n >= 10 ? 2 : 1;
+
+            for (int i = 0; i < digitRenderers.Length; i++)
+            {
+                var r = digitRenderers[i];
+                if (r == null) continue;
+
+                bool on = i < count;
+                r.enabled = on;
+                if (flames != null && i < flames.Length && flames[i] != null
+                    && flames[i].activeSelf != on)
+                    flames[i].SetActive(on);
+                if (!on) continue;
+
+                int divisor = (int)Mathf.Pow(10, count - 1 - i);
+                int d = (n / divisor) % 10;
+                if (digits != null && d < digits.Length && digits[d] != null)
+                    r.sprite = digits[d];
+
+                var lp = r.transform.localPosition;
+                lp.x = (i - (count - 1) * 0.5f) * digitSpacing;
+                r.transform.localPosition = lp;
+            }
+        }
+
+        void SetVisible(bool on)
+        {
+            if (cake != null) cake.enabled = on;
+            if (on) return;
+            foreach (var r in digitRenderers)
+                if (r != null) r.enabled = false;
+            foreach (var fl in flames)
+                if (fl != null && fl.activeSelf) fl.SetActive(false);
         }
     }
 }

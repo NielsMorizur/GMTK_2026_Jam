@@ -45,10 +45,11 @@ namespace ParsaProto
         {
             if (_released) return;
 
-            bool anyInput =
-                (Keyboard.current != null && Keyboard.current.anyKey.isPressed) ||
-                (Mouse.current != null && (Mouse.current.leftButton.isPressed
-                                           || Mouse.current.rightButton.isPressed));
+            // a FRESH key press only: keys already held when the scene starts
+            // (alt-tab, the click into the game view, R held from a reset)
+            // must not start the clock
+            bool anyInput = Keyboard.current != null
+                            && Keyboard.current.anyKey.wasPressedThisFrame;
 
             if (anyInput)
             {

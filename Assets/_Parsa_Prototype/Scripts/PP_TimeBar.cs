@@ -39,6 +39,11 @@ namespace ParsaProto
             new Color(0.9529412f, 0.5294118f, 0.26666668f, 1f),
             new Color(0.98f, 0.7f, 0.18f, 1f),
         };
+        [Tooltip("Form art by age, same order. When set, the threshold marker shows this sprite untinted instead of a colored chip.")]
+        public Sprite[] stageSprites = new Sprite[4];
+
+        /// <summary>Remaining fraction of the whole level, 1 at start, 0 at time's up. The cake rides this.</summary>
+        public float Progress01 { get; private set; } = 1f;
 
         SpriteRenderer _fillSprite;
         FieldInfo _fiIndex, _fiSequence, _fiSeconds;
@@ -98,7 +103,23 @@ namespace ParsaProto
             if (_fillSprite != null) _fillSprite.color = StageColor(seq, idx);
             if (markers != null)
                 for (int i = 0; i < markers.Length && i < count; i++)
-                    if (markers[i] != null) markers[i].color = StageColor(seq, i);
+                    if (markers[i] != null)
+                        ApplyMarkerLook(markers[i], System.Convert.ToInt32(seq.GetValue(i)));
+        }
+
+        void ApplyMarkerLook(SpriteRenderer marker, int age)
+        {
+            var art = (stageSprites != null && age >= 0 && age < stageSprites.Length)
+                ? stageSprites[age] : null;
+            if (art != null)
+            {
+                marker.sprite = art;
+                marker.color = Color.white;
+            }
+            else if (stageColors != null && age >= 0 && age < stageColors.Length)
+            {
+                marker.color = stageColors[age];
+            }
         }
 
         Color StageColor(System.Array seq, int i)
@@ -135,6 +156,7 @@ namespace ParsaProto
         // ---------- shared layout ----------
         void Layout(float f, int chipCount)
         {
+            Progress01 = f;
             Vector3 c = background.transform.localPosition;
 
             if (fill != null)
@@ -163,10 +185,10 @@ namespace ParsaProto
 
         void PreviewColors()
         {
-            if (markers == null || stageColors == null) return;
+            if (markers == null) return;
             for (int i = 0; i < markers.Length; i++)
-                if (markers[i] != null && i < stageColors.Length)
-                    markers[i].color = stageColors[i];
+                if (markers[i] != null)
+                    ApplyMarkerLook(markers[i], i);
         }
 
         void SetVisible(bool on)
