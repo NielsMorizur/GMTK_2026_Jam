@@ -16,6 +16,9 @@ namespace ParsaProto
             var teamPlayer = other.GetComponentInParent<Player>();
             if (teamPlayer != null)
             {
+                var sfx = teamPlayer.GetComponent<PP_SfxPlayer>();
+                if (sfx != null) sfx.PlayDie();
+
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 return;
             }

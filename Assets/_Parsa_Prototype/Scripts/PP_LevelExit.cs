@@ -30,6 +30,9 @@ namespace ParsaProto
             if (timer != null)
                 timer.OnLevelCompleted();
 
+            var sfx = other.GetComponentInParent<PP_SfxPlayer>();
+            if (sfx != null) sfx.PlayVictory();
+
             SceneManager.LoadScene(returnScene);
         }
     }
