@@ -154,16 +154,16 @@ MonoBehaviour:
   dashDuration: 0.15
   dashCooldown: 0.35
   grappleRange: 6
-  swingGravityScale: 3
-  pumpForce: 10
-  maxSwingSpeed: 14
+  swingGravityScale: 3.5
+  pumpForce: 12
+  maxSwingSpeed: 15
   swingLinearDamping: 0.15
-  reelSpeed: 8
-  minReelDistance: 0.6
-  grappleSlack: 0.4
-  grappleLength: 3.5
   ropeWidth: 0.08
   ropeColor: {r: 0.2, g: 0.2, b: 0.22, a: 1}
+  allowSwingInput: 1
+  limitSwingSpeed: 1
+  attachMomentumMode: 2
+  minSwingSeedSpeed: 3
   cornerTolerance: 0.35
   ledgeTolerance: 0.3
   groundCheckDistance: 0.88

@@ -73,14 +73,23 @@ public class Player : MonoBehaviour
     public float maxSwingSpeed = 9f;
     [Tooltip("Drag applied only while swinging, so momentum decays naturally instead of building forever.")]
     [Range(0f, 2f)] public float swingLinearDamping = 0.3f;
-    public float reelSpeed = 3f;
-    public float minReelDistance = 0.6f;
-    [Tooltip("Extra slack added to the rope on attach so it isn't instantly taut - lets momentum ease into the swing instead of jerking to a stop.")]
-    public float grappleSlack = 0.4f;
-    [Tooltip("The rope is always this long regardless of attach distance, so every swing has the same predictable arc.")]
-    public float grappleLength = 3.5f;
     public float ropeWidth = 0.08f;
     public Color ropeColor = new Color(0.2f, 0.2f, 0.22f, 1f);
+
+    public enum GrappleAttachMomentumMode
+    {
+        ZeroAll,
+        KeepVertical,
+        TangentProjected
+    }
+
+    [Header("Grapple - Testing")]
+    public bool allowSwingInput = true;
+    public bool limitSwingSpeed = true;
+    [Tooltip("How incoming velocity is handled on attach. TangentProjected (recommended) always starts a proper swing regardless of attach angle.")]
+    public GrappleAttachMomentumMode attachMomentumMode = GrappleAttachMomentumMode.TangentProjected;
+    [Tooltip("Minimum swing-starting speed used by TangentProjected mode when incoming velocity has little component perpendicular to the rope - e.g. falling straight onto a hook directly above or below.")]
+    public float minSwingSeedSpeed = 3f;
 
     public GrapplePoint CurrentGrappleTarget { get; private set; }
     public GrapplePoint AttachedGrapplePoint { get; private set; }
@@ -376,18 +385,22 @@ public class Player : MonoBehaviour
     {
         AttachedGrapplePoint = point;
 
+        Vector2 toAnchor = (Vector2)point.transform.position - (Vector2)transform.position;
+        float attachDistance = toAnchor.magnitude;
+
+        rb.linearVelocity = ComputeAttachVelocity(toAnchor);
+
         GrappleJoint = gameObject.AddComponent<DistanceJoint2D>();
         GrappleJoint.autoConfigureConnectedAnchor = false;
         GrappleJoint.connectedAnchor = point.transform.position;
-        GrappleJoint.distance = grappleLength;   // fixed rope: every swing is the same arc
-        GrappleJoint.maxDistanceOnly = true;
+        GrappleJoint.distance = attachDistance;
+        GrappleJoint.maxDistanceOnly = false;
         GrappleJoint.enableCollision = true;
 
         rb.gravityScale = swingGravityScale;
         rb.linearDamping = swingLinearDamping;
         IsGrappling = true;
 
-        // the press that attached us must not linger as a buffered jump
         jumpBufferTimer = 0f;
 
         if (ropeRenderer != null)
@@ -396,15 +409,60 @@ public class Player : MonoBehaviour
         stateMachine.ChangeState(grappleState);
     }
 
+    private Vector2 ComputeAttachVelocity(Vector2 toAnchor)
+    {
+        Vector2 incoming = rb.linearVelocity;
+
+        switch (attachMomentumMode)
+        {
+            case GrappleAttachMomentumMode.ZeroAll:
+                return Vector2.zero;
+
+            case GrappleAttachMomentumMode.KeepVertical:
+                return new Vector2(0f, incoming.y);
+
+            case GrappleAttachMomentumMode.TangentProjected:
+            default:
+                return ComputeTangentProjectedVelocity(toAnchor, incoming);
+        }
+    }
+
+    // Keeps only the velocity component perpendicular to the rope - the part
+    // that actually drives a swing. The component along the rope gets cancelled
+    // by the rigid rod on the next physics step regardless, so discarding it
+    // here avoids a jerk. If little to no swing-driving motion is left (e.g.
+    // falling straight onto a hook directly overhead/underneath), a minimum
+    // seed speed kicks the swing off instead of leaving the player hanging inert.
+    private Vector2 ComputeTangentProjectedVelocity(Vector2 toAnchor, Vector2 incoming)
+    {
+        Vector2 ropeDir = toAnchor.sqrMagnitude > 0.0001f ? toAnchor.normalized : Vector2.down;
+        Vector2 tangent = new Vector2(-ropeDir.y, ropeDir.x);
+
+        float tangentSpeed = Vector2.Dot(incoming, tangent);
+
+        if (Mathf.Abs(tangentSpeed) < minSwingSeedSpeed)
+        {
+            float seedSign = Mathf.Abs(tangentSpeed) > 0.001f
+                ? Mathf.Sign(tangentSpeed)
+                : Mathf.Sign(moveInput.x != 0f
+                    ? Vector2.Dot(new Vector2(moveInput.x, 0f), tangent)
+                    : Vector2.Dot(new Vector2(FacingDirection, 0f), tangent));
+
+            if (seedSign == 0f) seedSign = 1f; // rope perfectly horizontal: default to an upward kick
+            tangentSpeed = seedSign * minSwingSeedSpeed;
+        }
+
+        return tangent * tangentSpeed;
+    }
+
     private void HandleGrapplePhysics()
     {
         if (GrappleJoint == null) return;
 
-        // Gentle pump - nudges the swing, doesn't override it.
-        rb.AddForce(new Vector2(moveInput.x * pumpForce, 0f), ForceMode2D.Force);
+        if (allowSwingInput)
+            rb.AddForce(new Vector2(moveInput.x * pumpForce, 0f), ForceMode2D.Force);
 
-        // Soft cap so pumping can't spiral the swing into unrealistic speed.
-        if (rb.linearVelocity.magnitude > maxSwingSpeed)
+        if (limitSwingSpeed && rb.linearVelocity.magnitude > maxSwingSpeed)
             rb.linearVelocity = rb.linearVelocity.normalized * maxSwingSpeed;
     }
 
