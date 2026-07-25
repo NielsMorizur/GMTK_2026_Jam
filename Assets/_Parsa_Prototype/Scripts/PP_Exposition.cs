@@ -19,13 +19,16 @@ namespace ParsaProto
         public string nextScene = "MainRoom";
 
         [Header("Timing")]
-        [Tooltip("Seconds for each word to fade in")]
+        [Tooltip("Seconds for each word to rise into place")]
         public float wordFadeTime = 0.3f;
-        [Tooltip("Seconds between one word starting and the next")]
-        public float wordGap = 0.14f;
+        [Tooltip("Pause after a word lands before the next one starts")]
+        public float wordGap = 0.05f;
         public float fadeOut = 0.5f;
         public float gap = 0.25f;
+        [Tooltip("Line rise on fade-out, pixels")]
         public float riseDistance = 30f;
+        [Tooltip("How far each word rises into place, in em")]
+        public float wordRise = 0.35f;
 
         RectTransform _rt;
         Vector2 _home;
@@ -49,25 +52,31 @@ namespace ParsaProto
                 _advance = false;
                 text.alpha = 1f;
 
-                // words fade in one after another; the whole line drifts up
-                // gently across the reveal
+                // strictly one word at a time: each starts only after the
+                // previous one has fully landed (plus a small pause)
                 string[] words = line.Split(' ');
-                float revealTotal = wordGap * (words.Length - 1) + wordFadeTime;
+                float slot = wordFadeTime + wordGap;
+                float revealTotal = slot * words.Length - wordGap;
 
                 float t = 0f;
                 while (t < revealTotal && !_advance)
                 {
                     t += Time.unscaledDeltaTime;
-                    float lp = Mathf.Clamp01(t / revealTotal);
-                    lp = lp * lp * (3f - 2f * lp);
-                    _rt.anchoredPosition = _home + new Vector2(0f, -riseDistance * (1f - lp));
+                    _rt.anchoredPosition = _home;
 
+                    // every word fades AND rises on its own clock; earlier
+                    // words sit still while the new one floats up into place
                     sb.Length = 0;
                     for (int i = 0; i < words.Length; i++)
                     {
-                        float a = Mathf.Clamp01((t - i * wordGap) / Mathf.Max(0.01f, wordFadeTime));
+                        float a = Mathf.Clamp01((t - i * slot) / Mathf.Max(0.01f, wordFadeTime));
+                        float e = a * a * (3f - 2f * a);
+                        float off = -wordRise * (1f - e);
+
                         sb.Append("<alpha=#").Append(((int)(a * 255)).ToString("X2")).Append(">");
+                        sb.Append("<voffset=").Append(off.ToString("F3")).Append("em>");
                         sb.Append(words[i]);
+                        sb.Append("</voffset>");
                         if (i < words.Length - 1) sb.Append(' ');
                     }
                     text.text = sb.ToString();
