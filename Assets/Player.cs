@@ -260,7 +260,7 @@ public class Player : MonoBehaviour
         if (IsGrappling && AttachedGrapplePoint != null && ropeRenderer != null)
         {
             ropeRenderer.SetPosition(0, transform.position);
-            ropeRenderer.SetPosition(1, AttachedGrapplePoint.transform.position);
+            ropeRenderer.SetPosition(1, AttachedGrapplePoint.RopeAnchor);
         }
     }
 
