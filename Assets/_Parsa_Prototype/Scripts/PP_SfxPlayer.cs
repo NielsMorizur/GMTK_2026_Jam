@@ -165,7 +165,8 @@ namespace ParsaProto
             if (clip == null) return;
 
             _stepSource.pitch = 1f + Random.Range(-stepPitchJitter, stepPitchJitter);
-            _stepSource.PlayOneShot(clip, sfx.volume * (1f - Random.Range(0f, stepVolumeJitter)));
+            _stepSource.PlayOneShot(clip,
+                sfx.volume * PP_Settings.SfxVolume * (1f - Random.Range(0f, stepVolumeJitter)));
         }
 
         public void Play(Sfx sfx)
@@ -174,7 +175,7 @@ namespace ParsaProto
             var clip = Pick(sfx);
             if (clip == null || _source == null) return;
             _source.pitch = 1f + Random.Range(-sfx.pitchJitter, sfx.pitchJitter);
-            _source.PlayOneShot(clip, sfx.volume);
+            _source.PlayOneShot(clip, sfx.volume * PP_Settings.SfxVolume);
         }
 
         public void PlayDie() =>
@@ -195,7 +196,7 @@ namespace ParsaProto
             var src = go.AddComponent<AudioSource>();
             src.playOnAwake = false;
             src.pitch = 1f + Random.Range(-sfx.pitchJitter, sfx.pitchJitter);
-            src.PlayOneShot(clip, sfx.volume);
+            src.PlayOneShot(clip, sfx.volume * PP_Settings.SfxVolume);
             Destroy(go, clip.length + 0.5f);
         }
 

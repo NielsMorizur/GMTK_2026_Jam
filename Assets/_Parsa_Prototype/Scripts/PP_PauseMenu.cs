@@ -51,6 +51,7 @@ namespace ParsaProto
         {
             var kb = Keyboard.current;
             if (kb == null || panel == null) return;
+            if (PP_DeathHand.AnyPlaying) return;   // no pausing mid-claim
 
             if (kb.escapeKey.wasPressedThisFrame || kb.pKey.wasPressedThisFrame)
             {

@@ -930,9 +930,9 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -522101659
   m_SortingLayer: 2
-  m_SortingOrder: 20
+  m_SortingOrder: -2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 46da1af4ca7e9e97c2b69276cfc80051, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 16e2f7242d3a21b9ce2594cf5c44032c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -956,19 +956,23 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier:
   frames:
-  - {fileID: 21300000, guid: 46da1af4ca7e9e97c2b69276cfc80051, type: 3}
-  - {fileID: 21300000, guid: f3058076e340fc3337129ba82c93af9d, type: 3}
-  - {fileID: 21300000, guid: d5d7cae1399ad715ed50a481a7e91d47, type: 3}
-  - {fileID: 21300000, guid: dbebf48fb316bf7e7bf2de3d24ba5659, type: 3}
-  - {fileID: 21300000, guid: fbf3b676e9ccae295e3289f09bc2b833, type: 3}
-  - {fileID: 21300000, guid: 66a47eea8ffaca571b9ba863b8333e07, type: 3}
-  - {fileID: 21300000, guid: 0df336db8f5d975c9ee73a7cbe95c345, type: 3}
-  - {fileID: 21300000, guid: b8dcf4aecd7a1a9e73dc2352e4b38b6b, type: 3}
-  - {fileID: 21300000, guid: c6cc1abbee012163809183a7317ac377, type: 3}
-  - {fileID: 21300000, guid: 96a77cd5b891478e6778ffb87804d69c, type: 3}
-  - {fileID: 21300000, guid: 627116a6558240776eb865e61a3a31ab, type: 3}
-  - {fileID: 21300000, guid: 95f59d7feccf8d44e9eca4c158fa450b, type: 3}
+  - {fileID: 21300000, guid: 16e2f7242d3a21b9ce2594cf5c44032c, type: 3}
+  - {fileID: 21300000, guid: 8188622b090b5cb17eddae4385a0b5f0, type: 3}
+  - {fileID: 21300000, guid: 1f15444d513d1aa9196f9da281fa36c2, type: 3}
+  - {fileID: 21300000, guid: d0b8ecae12fbc9c9eef29fd274ea104c, type: 3}
+  - {fileID: 21300000, guid: 9006302b0a0af93b5bf6d7c1846b76ee, type: 3}
+  - {fileID: 21300000, guid: 9f50f0e241cb4c375d3e1e402872ff50, type: 3}
+  - {fileID: 21300000, guid: 3363b39b2f7d8ca95fe99c7eca693c29, type: 3}
+  - {fileID: 21300000, guid: fe0afcbda4784af476397172a80da33a, type: 3}
+  - {fileID: 21300000, guid: f3db71e17673a8389c9147097dfeed6f, type: 3}
+  - {fileID: 21300000, guid: a4b8b7288e4ecda3d9e7958c334e52d0, type: 3}
+  - {fileID: 21300000, guid: 38773140db54a4ab62dbfd47593cd9e7, type: 3}
+  - {fileID: 21300000, guid: 0b523995cd7b1af18cd6e7ed6697bb24, type: 3}
+  - {fileID: 21300000, guid: c4743b3bbd3f1f37a84f4ef4e518804c, type: 3}
+  - {fileID: 21300000, guid: 7148ecf3ce3c4fb89713a1c77f12cdb7, type: 3}
+  - {fileID: 21300000, guid: 0f8f75b78d5bdce1265d541e84c6e79a, type: 3}
   framesPerSecond: 18
-  claimFrame: 6
+  shrinkStartFrame: 7
+  claimFrame: 11
   holdAfter: 0.2
   hand: {fileID: 7788990011223344603}

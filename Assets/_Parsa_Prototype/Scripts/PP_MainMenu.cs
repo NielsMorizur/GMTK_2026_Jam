@@ -27,6 +27,9 @@ namespace ParsaProto
         public Button controlsBackButton;
         public Button settingsBackButton;
         public Toggle shakeToggle;
+        public Slider masterSlider;
+        public Slider sfxSlider;
+        public Slider musicSlider;
 
         void Awake()
         {
@@ -53,6 +56,23 @@ namespace ParsaProto
                 shakeToggle.onValueChanged.AddListener(on => PP_Settings.ScreenShakeDisabled = on);
             }
 
+            if (masterSlider != null)
+            {
+                masterSlider.SetValueWithoutNotify(PP_Settings.MasterVolume);
+                masterSlider.onValueChanged.AddListener(v => PP_Settings.MasterVolume = v);
+            }
+            if (sfxSlider != null)
+            {
+                sfxSlider.SetValueWithoutNotify(PP_Settings.SfxVolume);
+                sfxSlider.onValueChanged.AddListener(v => PP_Settings.SfxVolume = v);
+            }
+            if (musicSlider != null)
+            {
+                musicSlider.SetValueWithoutNotify(PP_Settings.MusicVolume);
+                musicSlider.onValueChanged.AddListener(v => PP_Settings.MusicVolume = v);
+            }
+
+            PP_Settings.ApplyAudio();
             Show(homePanel);
         }
 

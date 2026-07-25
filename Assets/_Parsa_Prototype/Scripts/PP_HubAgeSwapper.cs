@@ -40,6 +40,7 @@ namespace ParsaProto
         void Update()
         {
             if (!_hub || _player == null) return;
+            if (PP_DeathHand.AnyPlaying) return;
 
             var kb = Keyboard.current;
             if (kb == null || !kb.kKey.wasPressedThisFrame) return;
@@ -51,7 +52,10 @@ namespace ParsaProto
             int count = UnlockedForms();
             if (count <= 1) return;
 
-            int next = ((int)_player.CurrentAge + 1) % count;
+            // one-way aging: K stops at the youngest unlocked form.
+            // R resets back to the elder, same as in levels.
+            int next = (int)_player.CurrentAge + 1;
+            if (next >= count) return;
             _player.SetAge((AgeStage)next);
         }
     }
