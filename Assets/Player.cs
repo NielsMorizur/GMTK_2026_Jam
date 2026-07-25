@@ -403,13 +403,6 @@ public class Player : MonoBehaviour
         // Gentle pump - nudges the swing, doesn't override it.
         rb.AddForce(new Vector2(moveInput.x * pumpForce, 0f), ForceMode2D.Force);
 
-        // Holding up reels the rope in.
-        if (moveInput.y > 0f)
-        {
-            GrappleJoint.distance = Mathf.Max(minReelDistance,
-                GrappleJoint.distance - reelSpeed * Time.fixedDeltaTime);
-        }
-
         // Soft cap so pumping can't spiral the swing into unrealistic speed.
         if (rb.linearVelocity.magnitude > maxSwingSpeed)
             rb.linearVelocity = rb.linearVelocity.normalized * maxSwingSpeed;
@@ -480,6 +473,18 @@ public class Player : MonoBehaviour
 
         if (IsGrappling && !Stats.canGrapple)
             stateMachine.ChangeState(fallState);
+    }
+
+    /// <summary>Respawn hygiene: snap to idle (exiting any mid-action state
+    /// cleanly) and drop every buffered input so nothing fires post-respawn.</summary>
+    public void ResetActionState()
+    {
+        jumpBufferTimer = 0f;
+        coyoteTimer = 0f;
+        dashCooldownTimer = 0f;
+
+        if (stateMachine != null && idleState != null)
+            stateMachine.ChangeState(idleState);
     }
 
     public void SetVelocity(float xVelocity, float yVelocity)
