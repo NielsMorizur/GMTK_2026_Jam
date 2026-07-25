@@ -47,15 +47,27 @@ namespace ParsaProto
 
             // anti-double-fire only: short cooldown since the last swap
             var fx = GetComponent<PP_FormSwapEffects>();
-            if (fx != null && Time.realtimeSinceStartup - fx.LastSwapTime < 0.25f) return;
+            if (fx != null && Time.realtimeSinceStartup - fx.LastSwapTime < 0.25f)
+            {
+                Debug.Log("[PPDBG] hub K eaten: swap cooldown");
+                return;
+            }
 
             int count = UnlockedForms();
-            if (count <= 1) return;
+            if (count <= 1)
+            {
+                Debug.Log("[PPDBG] hub K inert: only 1 form unlocked");
+                return;
+            }
 
             // one-way aging: K stops at the youngest unlocked form.
             // R resets back to the elder, same as in levels.
             int next = (int)_player.CurrentAge + 1;
-            if (next >= count) return;
+            if (next >= count)
+            {
+                Debug.Log($"[PPDBG] hub K inert: youngest unlocked form (form={_player.CurrentAge} unlocked={count})");
+                return;
+            }
             _player.SetAge((AgeStage)next);
         }
     }

@@ -42,6 +42,16 @@ namespace ParsaProto
         [Tooltip("Form art by age, same order. When set, the threshold marker shows this sprite untinted instead of a colored chip.")]
         public Sprite[] stageSprites = new Sprite[4];
 
+        [Header("Standalone (no level controller, e.g. main menu)")]
+        [Tooltip("How many forms the bar shows when there is no controller. 0 = ask the GameManager what's unlocked (all 4 if there is none).")]
+        [Range(0, 4)] public int standaloneForms = 0;
+        [Tooltip("Seconds each form lasts in standalone mode.")]
+        public float standaloneSecondsPerForm = 30f;
+        [Tooltip("Count down and loop while standalone; off = sit at full time.")]
+        public bool standaloneRun = true;
+        [Tooltip("When the standalone timer empties: the hand claims the player if there is one, otherwise the scene reloads. Off = just loop silently.")]
+        public bool standaloneResetOnEmpty = true;
+
         /// <summary>Remaining fraction of the whole level, 1 at start, 0 at time's up. The cake rides this.</summary>
         public float Progress01 { get; private set; } = 1f;
 
@@ -90,6 +100,72 @@ namespace ParsaProto
 
             if (ageController != null) UpdateFromTeamController();
             else if (player != null) UpdateFromPrototype();
+            else UpdateStandalone();
+        }
+
+        // ---------- standalone path (main menu) ----------
+        float _standaloneElapsed;
+
+        int StandaloneFormCount()
+        {
+            if (standaloneForms > 0) return Mathf.Clamp(standaloneForms, 1, 4);
+
+            var gm = GameManager.Instance;
+            if (gm == null) return 4;
+
+            string lvl = gm.GetLevel();
+            if (lvl != null && lvl.StartsWith("Level")
+                && int.TryParse(lvl.Substring(5), out int n))
+                return Mathf.Clamp(n, 1, 4);
+            return 4;   // "End": everything unlocked
+        }
+
+        void UpdateStandalone()
+        {
+            int count = StandaloneFormCount();
+            float secs = Mathf.Max(1f, standaloneSecondsPerForm);
+            float total = count * secs;
+
+            if (standaloneRun && !PP_DeathHand.AnyPlaying)
+            {
+                _standaloneElapsed += Time.unscaledDeltaTime;
+                if (_standaloneElapsed >= total)
+                {
+                    _standaloneElapsed = 0f;
+                    if (standaloneResetOnEmpty) StandaloneTimeout();
+                }
+            }
+
+            int idx = Mathf.Clamp((int)(_standaloneElapsed / secs), 0, count - 1);
+            float stageElapsed = Mathf.Clamp01(_standaloneElapsed / secs - idx);
+            CurrentAgeValue = Mathf.Lerp(AgeBandStart[idx], AgeBandEnd[idx], stageElapsed);
+
+            SetVisible(true);
+            Layout(Mathf.Clamp01(1f - _standaloneElapsed / total), EvenFracs(count));
+
+            if (_fillSprite != null && stageColors != null && idx < stageColors.Length)
+                _fillSprite.color = stageColors[idx];
+            if (markers != null)
+                for (int i = 0; i < markers.Length && i < count; i++)
+                    if (markers[i] != null) ApplyMarkerLook(markers[i], i);
+        }
+
+        /// <summary>Refills the standalone clock (called by PP_LevelReset so R
+        /// in the hub also rewinds this bar).</summary>
+        public void ResetStandaloneClock() => _standaloneElapsed = 0f;
+
+        void StandaloneTimeout()
+        {
+            // a player in the scene (the hub): time out for real
+            var reset = Object.FindAnyObjectByType<PP_LevelReset>();
+            if (reset != null)
+            {
+                reset.DieAndReset();
+                return;
+            }
+            // no player (the main menu): start the scene over
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
 
         // ---------- team path (Level1+) ----------

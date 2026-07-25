@@ -25,8 +25,10 @@ namespace ParsaProto
         bool _searched;
         SpriteRenderer _sprite;
         PP_FormSwapEffects _fx;
+        Player _player;
         bool _flashing;
         Color _home;
+        AgeStage _flashAge;
 
         void Awake()
         {
@@ -37,6 +39,7 @@ namespace ParsaProto
             var anim = GetComponentInChildren<Animator>();
             _sprite = anim != null ? anim.GetComponent<SpriteRenderer>() : null;
             _fx = GetComponent<PP_FormSwapEffects>();   // the shared form palette
+            _player = GetComponent<Player>();
         }
 
         void Update()
@@ -71,6 +74,7 @@ namespace ParsaProto
             {
                 _flashing = true;
                 _home = _sprite.color;
+                _flashAge = _player != null ? _player.CurrentAge : AgeStage.Elderly;
             }
 
             Color target = _home;
@@ -91,7 +95,12 @@ namespace ParsaProto
         {
             if (!_flashing || _sprite == null) return;
             _flashing = false;
-            _sprite.color = _home;
+
+            // if the form swapped while flashing, SetAge already painted the
+            // NEW form's resting color; restoring the captured one would dress
+            // the new form in the old form's tint and make the swap look dead
+            if (_player == null || _player.CurrentAge == _flashAge)
+                _sprite.color = _home;
         }
     }
 }

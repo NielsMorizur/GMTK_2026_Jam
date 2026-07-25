@@ -93,6 +93,10 @@ namespace ParsaProto
             var gate = GetComponent<PP_TimerGate>();
             if (gate != null) gate.Rearm();
 
+            // a standalone bar (the hub) rewinds with the reset
+            var bar = Object.FindAnyObjectByType<PP_TimeBar>();
+            if (bar != null) bar.ResetStandaloneClock();
+
             // going back to stage one is not a dramatic "form swap"
             var swapFx = GetComponent<PP_FormSwapEffects>();
             if (swapFx != null) swapFx.ResyncAge();

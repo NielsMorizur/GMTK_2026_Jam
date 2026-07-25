@@ -361,7 +361,7 @@ MonoBehaviour:
   - I wonder where the universe will take me next....
   text: {fileID: 920000023}
   nextScene: MainRoom
-  loopForTesting: 1
+  loopForTesting: 0
   wordFadeTime: 0.35
   wordGap: 0.25
   specialWordGap: 1
@@ -370,8 +370,9 @@ MonoBehaviour:
   - Regrets
   fadeOut: 0.3
   gap: 0.05
-  riseDistance: 30
   wordRise: 0.1
+  floatAmplitude: 6
+  floatPeriod: 3.5
 --- !u!1 &920000020
 GameObject:
   m_ObjectHideFlags: 0

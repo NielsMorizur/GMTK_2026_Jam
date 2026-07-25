@@ -20,6 +20,7 @@ namespace ParsaProto
                 BindingFlags.Instance | BindingFlags.NonPublic);
 
         LevelAgeController _controller;
+        Player _player;
         bool _released;
 
         void Start()
@@ -62,6 +63,17 @@ namespace ParsaProto
             // must not start the clock
             bool anyInput = Keyboard.current != null
                             && Keyboard.current.anyKey.wasPressedThisFrame;
+
+            // ...but actually MOVING counts too. Holding W/A across a reset is
+            // not a fresh press, yet walking around with a frozen clock is
+            // plainly "playing" - the freeze is only for standing at spawn.
+            if (!anyInput)
+            {
+                if (_player == null) _player = FindAnyObjectByType<Player>();
+                anyInput = _player != null && _player.rb != null
+                           && _player.rb.linearVelocity.magnitude > 0.1f
+                           && !PP_DeathHand.AnyPlaying;
+            }
 
             if (anyInput)
             {
