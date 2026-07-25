@@ -17,18 +17,27 @@ namespace ParsaProto
         [TextArea] public string[] lines;
         public TextMeshProUGUI text;
         public string nextScene = "MainRoom";
+        [Tooltip("TESTING ONLY: loop the lines forever instead of loading the next scene")]
+        public bool loopForTesting = false;
 
         [Header("Timing")]
         [Tooltip("Seconds for each word to rise into place")]
         public float wordFadeTime = 0.3f;
-        [Tooltip("Pause after a word lands before the next one starts")]
-        public float wordGap = 0.05f;
+        [Tooltip("Seconds between one word starting and the next (they may overlap)")]
+        public float wordGap = 0.14f;
+        [Tooltip("Longer pause used after the special words below")]
+        public float specialWordGap = 0.6f;
+        [Tooltip("Words that get the longer pause after them (punctuation ignored)")]
+        public string[] pauseAfterWords = { "Ah", "Regrets" };
         public float fadeOut = 0.5f;
         public float gap = 0.25f;
-        [Tooltip("Line rise on fade-out, pixels")]
-        public float riseDistance = 30f;
         [Tooltip("How far each word rises into place, in em")]
         public float wordRise = 0.35f;
+
+        [Header("Idle float")]
+        [Tooltip("Gentle bob of the landed sentence, pixels")]
+        public float floatAmplitude = 6f;
+        public float floatPeriod = 3.5f;
 
         RectTransform _rt;
         Vector2 _home;
@@ -47,16 +56,21 @@ namespace ParsaProto
             text.alpha = 0f;
 
             var sb = new System.Text.StringBuilder();
+            do
+            {
             foreach (var line in lines)
             {
                 _advance = false;
                 text.alpha = 1f;
 
-                // strictly one word at a time: each starts only after the
-                // previous one has fully landed (plus a small pause)
+                // each word starts on the word-gap beat (rises may overlap);
+                // special words hold the next one back for a dramatic pause
                 string[] words = line.Split(' ');
-                float slot = wordFadeTime + wordGap;
-                float revealTotal = slot * words.Length - wordGap;
+                float[] starts = new float[words.Length];
+                for (int i = 1; i < words.Length; i++)
+                    starts[i] = starts[i - 1]
+                        + (IsSpecial(words[i - 1]) ? specialWordGap : wordGap);
+                float revealTotal = starts[words.Length - 1] + wordFadeTime;
 
                 float t = 0f;
                 while (t < revealTotal && !_advance)
@@ -69,7 +83,7 @@ namespace ParsaProto
                     sb.Length = 0;
                     for (int i = 0; i < words.Length; i++)
                     {
-                        float a = Mathf.Clamp01((t - i * slot) / Mathf.Max(0.01f, wordFadeTime));
+                        float a = Mathf.Clamp01((t - starts[i]) / Mathf.Max(0.01f, wordFadeTime));
                         float e = a * a * (3f - 2f * a);
                         float off = -wordRise * (1f - e);
 
@@ -83,21 +97,29 @@ namespace ParsaProto
                     yield return null;
                 }
                 text.text = line;
-                _rt.anchoredPosition = _home;
 
-                // the line stays up until space moves the story along
+                // the landed sentence floats gently until space moves it
+                // along. The bob clock starts at THIS moment, so it begins at
+                // exactly zero offset and eases in - no snap.
+                float w = Mathf.PI * 2f / Mathf.Max(0.5f, floatPeriod);
+                float bobStart = Time.unscaledTime;
                 _advance = false;
                 while (!_advance)
+                {
+                    _rt.anchoredPosition = _home + new Vector2(0f,
+                        Mathf.Sin((Time.unscaledTime - bobStart) * w) * floatAmplitude);
                     yield return null;
+                }
                 _advance = false;
 
+                // fade in place, same bob clock so the motion never jumps
                 t = 0f;
                 while (t < fadeOut && !_advance)
                 {
                     t += Time.unscaledDeltaTime;
-                    float e = 1f - Mathf.Clamp01(t / fadeOut);
-                    text.alpha = e;
-                    _rt.anchoredPosition = _home + new Vector2(0f, riseDistance * 0.4f * (1f - e));
+                    text.alpha = 1f - Mathf.Clamp01(t / fadeOut);
+                    _rt.anchoredPosition = _home + new Vector2(0f,
+                        Mathf.Sin((Time.unscaledTime - bobStart) * w) * floatAmplitude);
                     yield return null;
                 }
                 text.alpha = 0f;
@@ -109,8 +131,22 @@ namespace ParsaProto
                     yield return null;
                 }
             }
+            } while (loopForTesting);
 
             SceneManager.LoadScene(nextScene);
+        }
+
+        bool IsSpecial(string word)
+        {
+            if (pauseAfterWords == null) return false;
+            string w = word.TrimEnd(',', '.', '?', '!', ':', ';').ToLowerInvariant();
+            foreach (var s in pauseAfterWords)
+            {
+                if (string.IsNullOrEmpty(s)) continue;
+                if (w == s.TrimEnd(',', '.', '?', '!', ':', ';').ToLowerInvariant())
+                    return true;
+            }
+            return false;
         }
 
         void Update()
