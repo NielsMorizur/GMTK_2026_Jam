@@ -140,7 +140,11 @@ TextureImporter:
       weights: []
     outline: []
     customData: 
-    physicsShape: []
+    physicsShape:
+    - - {x: 1024, y: 664}
+      - {x: -1024, y: 664}
+      - {x: -1024, y: -1024}
+      - {x: 1024, y: -1024}
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0

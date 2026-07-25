@@ -57,10 +57,12 @@ namespace ParsaProto
                 if (layers[i] != null) src.PlayScheduled(startAt);   // sample-locked
             }
 
-            // persists only when standalone; as a child (e.g. on the player)
-            // it simply lives and dies with its parent
-            if (transform.parent == null)
-                DontDestroyOnLoad(gameObject);
+            // whoever wakes first becomes THE music player and survives every
+            // scene change (detached if it was a child, e.g. on the player);
+            // all later copies destroy themselves in the guard above. The
+            // stems never stop, so no transition ever restarts the song.
+            transform.SetParent(null);
+            DontDestroyOnLoad(gameObject);
         }
 
         /// <summary>Kept for the settings slider; volumes recompute every frame.</summary>
