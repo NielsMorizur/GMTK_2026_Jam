@@ -12,7 +12,7 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
+  - Doors
   - 
   - 
   - 
@@ -38,6 +38,9 @@ TagManager:
   - Backdrop
   - 
   m_SortingLayers:
+  - name: Doors
+    uniqueID: 991038935
+    locked: 0
   - name: Background
     uniqueID: 627392841
     locked: 0

@@ -910,8 +910,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 991038935
+  m_SortingLayer: -2
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60a11, type: 3}
@@ -6916,7 +6916,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelName: Level1
-  availableColor: {r: 0.990566, g: 0.990566, b: 0.990566, a: 1}
+  availableColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &6150000012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6930,7 +6930,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelName: Level2
-  availableColor: {r: 0.35, g: 0.9, b: 0.45, a: 1}
+  availableColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &6150000013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6944,7 +6944,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelName: Level3
-  availableColor: {r: 0.35, g: 0.9, b: 0.45, a: 1}
+  availableColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &6150000014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6958,7 +6958,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelName: Level4
-  availableColor: {r: 0.35, g: 0.9, b: 0.45, a: 1}
+  availableColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6730000001
 GameObject:
   m_ObjectHideFlags: 0
