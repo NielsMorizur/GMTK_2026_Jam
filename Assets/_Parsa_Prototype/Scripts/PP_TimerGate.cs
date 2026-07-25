@@ -22,6 +22,7 @@ namespace ParsaProto
         LevelAgeController _controller;
         Player _player;
         bool _released;
+        int _armFrame = -1;
 
         void Start()
         {
@@ -37,6 +38,7 @@ namespace ParsaProto
         void Engage()
         {
             _released = false;
+            _armFrame = Time.frameCount;
             _controller = FindAnyObjectByType<LevelAgeController>();
 
             // nothing to gate: no controller in this scene, or it has no age
@@ -58,28 +60,32 @@ namespace ParsaProto
         {
             if (_released) return;
 
-            // a FRESH key press only: keys already held when the scene starts
-            // (alt-tab, the click into the game view, R held from a reset)
-            // must not start the clock
-            bool anyInput = Keyboard.current != null
-                            && Keyboard.current.anyKey.wasPressedThisFrame;
+            // the R press that caused this re-arm must not immediately release it
+            if (Time.frameCount <= _armFrame) return;
 
-            // ...but actually MOVING counts too. Holding W/A across a reset is
-            // not a fresh press, yet walking around with a frozen clock is
-            // plainly "playing" - the freeze is only for standing at spawn.
-            if (!anyInput)
-            {
-                if (_player == null) _player = FindAnyObjectByType<Player>();
-                anyInput = _player != null && _player.rb != null
-                           && _player.rb.linearVelocity.magnitude > 0.1f
-                           && !PP_DeathHand.AnyPlaying;
-            }
-
-            if (anyInput)
+            if (_player == null) _player = FindAnyObjectByType<Player>();
+            if (WakeInput(_player))
             {
                 TimerActiveField.SetValue(_controller, true);
                 _released = true;
             }
+        }
+
+        /// <summary>The one shared wake rule: a FRESH key press, or actually
+        /// moving while holding a key. Spawn-settle physics with no key down
+        /// never wakes a clock; holding W across a reset and walking does.
+        /// The standalone TimeBar uses this too.</summary>
+        public static bool WakeInput(Player player)
+        {
+            if (PP_DeathHand.AnyPlaying || PP_PauseMenu.IsOpen) return false;
+            var kb = Keyboard.current;
+            if (kb == null) return false;
+
+            if (kb.anyKey.wasPressedThisFrame) return true;
+
+            return kb.anyKey.isPressed
+                   && player != null && player.rb != null
+                   && player.rb.linearVelocity.magnitude > 0.5f;
         }
     }
 }

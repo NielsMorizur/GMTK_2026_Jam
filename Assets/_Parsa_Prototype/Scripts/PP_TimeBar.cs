@@ -103,8 +103,12 @@ namespace ParsaProto
             else UpdateStandalone();
         }
 
-        // ---------- standalone path (main menu) ----------
+        // ---------- standalone path (main menu, hub) ----------
         float _standaloneElapsed;
+        Player _standalonePlayer;
+        bool _standaloneSearched;
+        bool _standaloneArmed = true;   // waits for input when a player exists
+        int _standaloneArmFrame = -1;
 
         int StandaloneFormCount()
         {
@@ -126,19 +130,56 @@ namespace ParsaProto
             float secs = Mathf.Max(1f, standaloneSecondsPerForm);
             float total = count * secs;
 
-            if (standaloneRun && !PP_DeathHand.AnyPlaying)
+            // same rule as the levels: with a player in the scene, the clock
+            // holds until real input. Player-less scenes (main menu) run free.
+            if (!_standaloneSearched)
+            {
+                _standaloneSearched = true;
+                _standalonePlayer = Object.FindAnyObjectByType<Player>();
+            }
+            if (_standaloneArmed && _standalonePlayer != null
+                && Time.frameCount > _standaloneArmFrame)
+            {
+                if (PP_TimerGate.WakeInput(_standalonePlayer)) _standaloneArmed = false;
+            }
+            bool running = standaloneRun && !PP_DeathHand.AnyPlaying
+                           && (_standalonePlayer == null || !_standaloneArmed);
+
+            if (running)
             {
                 _standaloneElapsed += Time.unscaledDeltaTime;
                 if (_standaloneElapsed >= total)
                 {
-                    _standaloneElapsed = 0f;
-                    if (standaloneResetOnEmpty) StandaloneTimeout();
+                    if (standaloneResetOnEmpty)
+                    {
+                        // park at empty through the death presentation; the
+                        // reset at the end refills and re-arms the clock
+                        _standaloneElapsed = total;
+                        StandaloneTimeout();
+                    }
+                    else
+                    {
+                        _standaloneElapsed = 0f;   // silent loop
+                    }
                 }
+            }
+
+            // manual K-swaps drag the clock forward to that form's band, so
+            // the bar and the form never disagree
+            if (_standalonePlayer != null)
+            {
+                int cur = Mathf.Clamp((int)_standalonePlayer.CurrentAge, 0, count - 1);
+                if (cur * secs > _standaloneElapsed) _standaloneElapsed = cur * secs;
             }
 
             int idx = Mathf.Clamp((int)(_standaloneElapsed / secs), 0, count - 1);
             float stageElapsed = Mathf.Clamp01(_standaloneElapsed / secs - idx);
             CurrentAgeValue = Mathf.Lerp(AgeBandStart[idx], AgeBandEnd[idx], stageElapsed);
+
+            // ...and the clock transforms him at each band threshold, exactly
+            // like a level (no LevelAgeController here to do it)
+            if (_standalonePlayer != null && idx > (int)_standalonePlayer.CurrentAge)
+                _standalonePlayer.SetAge((AgeStage)idx);
 
             SetVisible(true);
             Layout(Mathf.Clamp01(1f - _standaloneElapsed / total), EvenFracs(count));
@@ -150,16 +191,25 @@ namespace ParsaProto
                     if (markers[i] != null) ApplyMarkerLook(markers[i], i);
         }
 
-        /// <summary>Refills the standalone clock (called by PP_LevelReset so R
-        /// in the hub also rewinds this bar).</summary>
-        public void ResetStandaloneClock() => _standaloneElapsed = 0f;
+        /// <summary>Refills the standalone clock and freezes it until the next
+        /// real input (called by PP_LevelReset so R in the hub behaves exactly
+        /// like a level reset).</summary>
+        public void ResetStandaloneClock()
+        {
+            _standaloneElapsed = 0f;
+            _standaloneArmed = true;
+            _standaloneArmFrame = Time.frameCount;
+        }
 
         void StandaloneTimeout()
         {
-            // a player in the scene (the hub): time out for real
+            // a player in the scene (the hub): time out for real, same sound
+            // and hand claim as a level timeout
             var reset = Object.FindAnyObjectByType<PP_LevelReset>();
             if (reset != null)
             {
+                var sfx = reset.GetComponent<PP_SfxPlayer>();
+                if (sfx != null) sfx.PlayDie();
                 reset.DieAndReset();
                 return;
             }
@@ -171,6 +221,9 @@ namespace ParsaProto
         // ---------- team path (Level1+) ----------
         void UpdateFromTeamController()
         {
+            // death presentation: hold the last honest reading so the player
+            // can look up and SEE the empty clock; the reset refreshes it
+            if (PP_DeathHand.AnyPlaying) return;
             var seq = _fiSequence != null ? _fiSequence.GetValue(ageController) as System.Array : null;
             if (seq == null || seq.Length == 0 || _fiIndex == null || _fiSeconds == null) return;
 
