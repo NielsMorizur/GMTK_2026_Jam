@@ -159,7 +159,7 @@ MonoBehaviour:
   maxSwingSpeed: 15
   swingLinearDamping: 0.15
   ropeWidth: 0.08
-  ropeColor: {r: 0.2, g: 0.2, b: 0.22, a: 1}
+  ropeColor: {r: 0.4509804, g: 0.26666668, b: 0.105882354, a: 1}
   allowSwingInput: 1
   limitSwingSpeed: 1
   attachMomentumMode: 2
@@ -488,7 +488,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7148ecf3ce3c4fb89713a1c77f12cdb7, type: 3}
   - {fileID: 21300000, guid: 0f8f75b78d5bdce1265d541e84c6e79a, type: 3}
   framesPerSecond: 18
-  shrinkStartFrame: 7
+  shrinkStartFrame: 5
   claimFrame: 11
   holdAfter: 0.2
   hand: {fileID: 7788990011223344603}
@@ -766,12 +766,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa10a1b2c3d4e5f60718293a4b5c6e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  formPitch:
-  - 1
-  - 1.06
-  - 1.122
-  - 1.189
-  pitchGlide: 2
+  layers:
+  - {fileID: 8300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60a41, type: 3}
+  - {fileID: 8300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60a42, type: 3}
+  - {fileID: 8300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60a43, type: 3}
+  - {fileID: 8300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60a44, type: 3}
+  fadeTime: 1.2
 --- !u!1 &7788990011223344601
 GameObject:
   m_ObjectHideFlags: 0
