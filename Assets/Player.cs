@@ -77,6 +77,8 @@ public class Player : MonoBehaviour
     public float minReelDistance = 0.6f;
     [Tooltip("Extra slack added to the rope on attach so it isn't instantly taut - lets momentum ease into the swing instead of jerking to a stop.")]
     public float grappleSlack = 0.4f;
+    [Tooltip("The rope is always this long regardless of attach distance, so every swing has the same predictable arc.")]
+    public float grappleLength = 3.5f;
     public float ropeWidth = 0.08f;
     public Color ropeColor = new Color(0.2f, 0.2f, 0.22f, 1f);
 
@@ -87,6 +89,12 @@ public class Player : MonoBehaviour
     public float DefaultLinearDamping { get; private set; }
 
     private LineRenderer ropeRenderer;
+
+    [Header("Corner correction")]
+    [Tooltip("Rising into a ceiling corner shoves you sideways up to this far to slip around it")]
+    public float cornerTolerance = 0.35f;
+    [Tooltip("Moving into a platform lip that barely catches your feet pops you up over it, up to this high")]
+    public float ledgeTolerance = 0.3f;
 
     [Header("Collision detection")]
     [SerializeField] private float groundCheckDistance;
@@ -170,6 +178,72 @@ public class Player : MonoBehaviour
         stateMachine.FixedUpdateActiveState();
         if (IsGrappling)
             HandleGrapplePhysics();
+        HandleCornerCorrection();
+        HandleLedgeCorrection();
+    }
+
+    // The horizontal twin: moving into a ledge that only just catches the
+    // feet pops the player up over the lip instead of stopping him.
+    private void HandleLedgeCorrection()
+    {
+        if (ledgeTolerance <= 0f || box2D == null) return;
+        if (IsGrappling || groundDetected) return;
+        float vx = rb.linearVelocity.x;
+        if (Mathf.Abs(vx) <= 0.05f) return;
+        if (rb.linearVelocity.y > 0.1f) return;   // rising is the ceiling case
+
+        float dir = Mathf.Sign(vx);
+        Bounds b = box2D.bounds;
+        const float probe = 0.1f;
+
+        // path ahead clear? nothing to do
+        if (Physics2D.BoxCast(b.center, new Vector2(b.size.x * 0.9f, b.size.y * 0.95f),
+                0f, Vector2.right * dir, probe, whatIsGround).collider == null)
+            return;
+
+        // find the smallest upward pop that clears the lip
+        Vector2 checkSize = new Vector2(b.size.x * 0.95f, b.size.y * 0.95f);
+        for (float shift = 0.08f; shift <= ledgeTolerance + 0.001f; shift += 0.07f)
+        {
+            Vector2 at = (Vector2)b.center + new Vector2(dir * probe, shift);
+            if (Physics2D.OverlapBox(at, checkSize, 0f, whatIsGround) == null)
+            {
+                transform.position += new Vector3(0f, shift, 0f);
+                return;
+            }
+        }
+    }
+
+    // Celeste-style corner correction: rising into the EDGE of a ceiling
+    // nudges the player sideways around it instead of killing the jump.
+    private void HandleCornerCorrection()
+    {
+        if (cornerTolerance <= 0f || box2D == null) return;
+        if (IsDashing || IsGrappling || groundDetected) return;
+        if (rb.linearVelocity.y <= 0.01f) return;
+
+        Bounds b = box2D.bounds;
+        const float probe = 0.1f;
+
+        // head clear? nothing to do
+        if (Physics2D.BoxCast(b.center, new Vector2(b.size.x * 0.95f, b.size.y * 0.9f),
+                0f, Vector2.up, probe, whatIsGround).collider == null)
+            return;
+
+        // find the smallest sideways shift that clears the ceiling
+        Vector2 checkSize = new Vector2(b.size.x * 0.95f, b.size.y * 0.9f);
+        for (float shift = 0.08f; shift <= cornerTolerance + 0.001f; shift += 0.07f)
+        {
+            foreach (float dir in new[] { 1f, -1f })
+            {
+                Vector2 at = (Vector2)b.center + new Vector2(dir * shift, probe);
+                if (Physics2D.OverlapBox(at, checkSize, 0f, whatIsGround) == null)
+                {
+                    transform.position += new Vector3(dir * shift, 0f, 0f);
+                    return;
+                }
+            }
+        }
     }
 
     private void LateUpdate()
@@ -302,12 +376,10 @@ public class Player : MonoBehaviour
     {
         AttachedGrapplePoint = point;
 
-        float currentDistance = Vector2.Distance(transform.position, point.transform.position);
-
         GrappleJoint = gameObject.AddComponent<DistanceJoint2D>();
         GrappleJoint.autoConfigureConnectedAnchor = false;
         GrappleJoint.connectedAnchor = point.transform.position;
-        GrappleJoint.distance = currentDistance + grappleSlack; // slack prevents an instant hard stop
+        GrappleJoint.distance = grappleLength;   // fixed rope: every swing is the same arc
         GrappleJoint.maxDistanceOnly = true;
         GrappleJoint.enableCollision = true;
 
