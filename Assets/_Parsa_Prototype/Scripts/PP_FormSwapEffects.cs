@@ -94,9 +94,12 @@ namespace ParsaProto
             Fire(age);
         }
 
-        /// <summary>True while the swap presentation (swirl + poof) is playing.
-        /// K is ignored during this so a swap can't double-fire.</summary>
+        /// <summary>True while the swap presentation (swirl + poof) is playing.</summary>
         public bool IsPresenting { get; private set; }
+
+        /// <summary>Real time of the last swap; K sources use this as a short
+        /// anti-double-fire cooldown that can never block unrelated inputs.</summary>
+        public float LastSwapTime { get; private set; } = -99f;
 
         /// <summary>Adopt the current age without firing (level resets).</summary>
         public void ResyncAge()
@@ -111,6 +114,7 @@ namespace ParsaProto
         void Fire(AgeStage age)
         {
             IsPresenting = true;
+            LastSwapTime = Time.realtimeSinceStartup;
 
             if (slowMoScale < 1f && !_slowMo)
                 StartCoroutine(SlowMo());

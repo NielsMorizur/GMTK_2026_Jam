@@ -45,9 +45,9 @@ namespace ParsaProto
             var kb = Keyboard.current;
             if (kb == null || !kb.kKey.wasPressedThisFrame) return;
 
-            // one swap at a time: K waits out the swap presentation
+            // anti-double-fire only: short cooldown since the last swap
             var fx = GetComponent<PP_FormSwapEffects>();
-            if (fx != null && fx.IsPresenting) return;
+            if (fx != null && Time.realtimeSinceStartup - fx.LastSwapTime < 0.25f) return;
 
             int count = UnlockedForms();
             if (count <= 1) return;

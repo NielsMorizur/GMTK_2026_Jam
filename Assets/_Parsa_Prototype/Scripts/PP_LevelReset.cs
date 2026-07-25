@@ -65,6 +65,8 @@ namespace ParsaProto
                 if (_player.rb != null) _player.rb.linearVelocity = Vector2.zero;
                 _player.hasDoubleJump = true;
                 _player.hasAirDash = true;
+                // exits any mid-death dash/jump state and clears buffered inputs
+                _player.ResetActionState();
             }
 
             var ctrl = Object.FindAnyObjectByType<LevelAgeController>();

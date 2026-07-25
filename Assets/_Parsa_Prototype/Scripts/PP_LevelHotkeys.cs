@@ -32,9 +32,8 @@ namespace ParsaProto
             var kb = Keyboard.current;
             if (kb == null) return;
 
-            // no inputs while the death hand has him
-            var deathHand = GetComponent<PP_DeathHand>();
-            if (deathHand != null && deathHand.IsPlaying) return;
+            // no inputs during ANY death presentation (hand or ghost)
+            if (PP_DeathHand.AnyPlaying) return;
 
             if (kb.rKey.wasPressedThisFrame)
             {
@@ -48,9 +47,10 @@ namespace ParsaProto
                 && _fiTimer != null && _fiSeconds != null
                 && _fiIndex != null && _fiSequence != null)
             {
-                // one swap at a time: K waits out the swap presentation
+                // anti-double-fire only: a short cooldown since the LAST swap.
+                // dashing, double jumping, anything else never blocks K.
                 var fx = GetComponent<PP_FormSwapEffects>();
-                if (fx != null && fx.IsPresenting) return;
+                if (fx != null && Time.realtimeSinceStartup - fx.LastSwapTime < 0.25f) return;
 
                 // E does nothing on the level's final form
                 var seq = _fiSequence.GetValue(_timer) as System.Array;

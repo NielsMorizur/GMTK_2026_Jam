@@ -475,6 +475,18 @@ public class Player : MonoBehaviour
             stateMachine.ChangeState(fallState);
     }
 
+    /// <summary>Respawn hygiene: snap to idle (exiting any mid-action state
+    /// cleanly) and drop every buffered input so nothing fires post-respawn.</summary>
+    public void ResetActionState()
+    {
+        jumpBufferTimer = 0f;
+        coyoteTimer = 0f;
+        dashCooldownTimer = 0f;
+
+        if (stateMachine != null && idleState != null)
+            stateMachine.ChangeState(idleState);
+    }
+
     public void SetVelocity(float xVelocity, float yVelocity)
     {
         rb.linearVelocity = new Vector2(xVelocity, yVelocity);
