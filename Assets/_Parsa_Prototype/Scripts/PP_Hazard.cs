@@ -21,7 +21,7 @@ namespace ParsaProto
 
                 var reset = teamPlayer.GetComponent<PP_LevelReset>();
                 if (reset != null) reset.DieAsGhost();
-                else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                else PP_ScreenFade.LoadScene(SceneManager.GetActiveScene().name);
                 return;
             }
 

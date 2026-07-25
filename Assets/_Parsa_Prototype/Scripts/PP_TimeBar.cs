@@ -214,7 +214,7 @@ namespace ParsaProto
                 return;
             }
             // no player (the main menu): start the scene over
-            UnityEngine.SceneManagement.SceneManager.LoadScene(
+            PP_ScreenFade.LoadScene(
                 UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
 

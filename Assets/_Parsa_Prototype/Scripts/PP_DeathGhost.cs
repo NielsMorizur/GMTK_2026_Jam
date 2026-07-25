@@ -58,6 +58,13 @@ namespace ParsaProto
             PP_DeathHand.AnyPlaying = true;
             Time.timeScale = 0f;
 
+            // darkness closes in over the whole ghost rise
+            float fdt = 1f / Mathf.Max(1f, framesPerSecond);
+            float total = startHoldFrames * fdt * startHoldMultiplier
+                          + Mathf.Max(0, frames.Length - startHoldFrames) * fdt
+                          + holdAfter;
+            PP_ScreenFade.FadeOut(total);
+
             if (_player != null && _player.input != null)
                 _player.input.Disable();
 
@@ -84,17 +91,21 @@ namespace ParsaProto
             float h = 0f;
             while (h < holdAfter) { h += Time.unscaledDeltaTime; yield return null; }
 
-            ghost.gameObject.SetActive(false);
-            ghost.transform.localPosition = basePos;
-            SetPlayerVisible(true);
+            // the respawn snap happens under a black wipe
+            PP_ScreenFade.Wipe(() =>
+            {
+                ghost.gameObject.SetActive(false);
+                ghost.transform.localPosition = basePos;
+                SetPlayerVisible(true);
 
-            if (_player != null && _player.input != null)
-                _player.input.Enable();
+                if (_player != null && _player.input != null)
+                    _player.input.Enable();
 
-            Time.timeScale = PP_PauseMenu.IsOpen ? 0f : 1f;
-            IsPlaying = false;
-            PP_DeathHand.AnyPlaying = false;
-            onDone?.Invoke();
+                Time.timeScale = PP_PauseMenu.IsOpen ? 0f : 1f;
+                IsPlaying = false;
+                PP_DeathHand.AnyPlaying = false;
+                onDone?.Invoke();
+            });
         }
 
         void SetPlayerVisible(bool on)
