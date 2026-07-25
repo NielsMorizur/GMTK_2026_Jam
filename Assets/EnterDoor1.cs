@@ -34,7 +34,7 @@ public class EnterDoor1 : MonoBehaviour
     {
         if (playerInRange && player.input.Player.Interact.WasPerformedThisFrame() && gm.GetLevel() == levelToLoad)
         {
-            SceneManager.LoadScene(levelToLoad);
+            ParsaProto.PP_ScreenFade.LoadScene(levelToLoad);
         }
     }
 }

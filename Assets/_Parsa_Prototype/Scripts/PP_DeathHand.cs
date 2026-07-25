@@ -62,6 +62,9 @@ namespace ParsaProto
             Time.timeScale = 0f;
             hand.gameObject.SetActive(true);
 
+            // darkness closes in over the whole claim, fully black at its end
+            PP_ScreenFade.FadeOut(frames.Length / Mathf.Max(1f, framesPerSecond) + holdAfter);
+
             // dead men press no buttons
             if (_player != null && _player.input != null)
                 _player.input.Disable();
@@ -116,18 +119,22 @@ namespace ParsaProto
             float h = 0f;
             while (h < holdAfter) { h += Time.unscaledDeltaTime; yield return null; }
 
-            hand.gameObject.SetActive(false);
-            if (spriteT != null) spriteT.localScale = baseScale;
-            if (_playerSprite != null) _playerSprite.color = originalTint;
-            if (_glow != null) _glow.enabled = true;
-            SetPlayerVisible(true);
-            if (squash != null) squash.enabled = true;
-            if (_player != null && _player.input != null)
-                _player.input.Enable();
-            Time.timeScale = PP_PauseMenu.IsOpen ? 0f : 1f;
-            IsPlaying = false;
-            AnyPlaying = false;
-            onDone?.Invoke();
+            // the respawn snap happens under a black wipe
+            PP_ScreenFade.Wipe(() =>
+            {
+                hand.gameObject.SetActive(false);
+                if (spriteT != null) spriteT.localScale = baseScale;
+                if (_playerSprite != null) _playerSprite.color = originalTint;
+                if (_glow != null) _glow.enabled = true;
+                SetPlayerVisible(true);
+                if (squash != null) squash.enabled = true;
+                if (_player != null && _player.input != null)
+                    _player.input.Enable();
+                Time.timeScale = PP_PauseMenu.IsOpen ? 0f : 1f;
+                IsPlaying = false;
+                AnyPlaying = false;
+                onDone?.Invoke();
+            });
         }
 
         void SetPlayerVisible(bool on)

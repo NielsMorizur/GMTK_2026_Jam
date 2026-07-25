@@ -109,7 +109,7 @@ namespace ParsaProto
                 if (kPressed) Debug.Log($"[PPDBG] K eaten: R pressed same frame. {kCtx}");
                 var reset = GetComponent<PP_LevelReset>();
                 if (reset != null) reset.ResetLevel();
-                else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                else PP_ScreenFade.LoadScene(SceneManager.GetActiveScene().name);
                 return;
             }
 

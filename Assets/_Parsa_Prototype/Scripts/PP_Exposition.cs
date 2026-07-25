@@ -47,7 +47,7 @@ namespace ParsaProto
         {
             if (text == null || lines == null || lines.Length == 0)
             {
-                SceneManager.LoadScene(nextScene);
+                PP_ScreenFade.LoadScene(nextScene);
                 yield break;
             }
 
@@ -133,7 +133,7 @@ namespace ParsaProto
             }
             } while (loopForTesting);
 
-            SceneManager.LoadScene(nextScene);
+            PP_ScreenFade.LoadScene(nextScene);
         }
 
         bool IsSpecial(string word)

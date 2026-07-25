@@ -40,7 +40,7 @@ namespace ParsaProto
                 module.AssignDefaultActions();
 
             if (enterButton != null)
-                enterButton.onClick.AddListener(() => SceneManager.LoadScene(enterScene));
+                enterButton.onClick.AddListener(() => PP_ScreenFade.LoadScene(enterScene));
             if (controlsButton != null)
                 controlsButton.onClick.AddListener(() => Show(controlsPanel));
             if (settingsButton != null)
