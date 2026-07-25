@@ -9,7 +9,7 @@ namespace ParsaProto
     /// </summary>
     public class PP_ButtonJuice : MonoBehaviour,
         IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler,
-        ISelectHandler, IDeselectHandler
+        ISelectHandler, IDeselectHandler, ISubmitHandler
     {
         public float hoverScale = 1.06f;
         public float pressScale = 0.94f;
@@ -32,6 +32,7 @@ namespace ParsaProto
             _hovering = true; _target = hoverScale;
             CurrentFocus = this; FocusFromPointer = true;
             LastFocusEvent = Time.realtimeSinceStartup;
+            PP_UiSfx.Hover();
         }
 
         public void OnPointerExit(PointerEventData e)
@@ -41,14 +42,18 @@ namespace ParsaProto
             LastFocusEvent = Time.realtimeSinceStartup;
         }
 
-        public void OnPointerDown(PointerEventData e) { _target = pressScale; }
+        public void OnPointerDown(PointerEventData e) { _target = pressScale; PP_UiSfx.Click(); }
         public void OnPointerUp(PointerEventData e) { _target = _hovering ? hoverScale : 1f; }
+
+        // keyboard Space/J/Enter activation clicks too
+        public void OnSubmit(BaseEventData e) { PP_UiSfx.Click(); }
 
         public void OnSelect(BaseEventData e)
         {
             _target = hoverScale;
             CurrentFocus = this; FocusFromPointer = false;
             LastFocusEvent = Time.realtimeSinceStartup;
+            PP_UiSfx.Hover();
         }
 
         public void OnDeselect(BaseEventData e)
