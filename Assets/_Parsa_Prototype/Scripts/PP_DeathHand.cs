@@ -19,16 +19,14 @@ namespace ParsaProto
         public int claimFrame = 11;
         [Tooltip("Extra real-time pause after the last frame")]
         public float holdAfter = 0.2f;
-        [Tooltip("Real-time seconds for the player to fade to black at death")]
-        public float tintFadeTime = 0.25f;
         [Tooltip("The hand renderer (child of the player)")]
         public SpriteRenderer hand;
 
         public bool IsPlaying { get; private set; }
 
-        /// <summary>True while any death claim is playing; gameplay and menu
-        /// inputs check this to stay silent.</summary>
-        public static bool AnyPlaying { get; private set; }
+        /// <summary>True while any death presentation (hand or ghost) is
+        /// playing; gameplay and menu inputs check this to stay silent.</summary>
+        public static bool AnyPlaying { get; set; }
 
         Player _player;
         SpriteRenderer _playerSprite;
@@ -68,7 +66,7 @@ namespace ParsaProto
             if (_player != null && _player.input != null)
                 _player.input.Disable();
 
-            // hard black the moment death takes hold; the halo goes out
+            // the halo goes out while the hand has him
             Color originalTint = _playerSprite != null ? _playerSprite.color : Color.white;
             if (_glow != null) _glow.enabled = false;
 
@@ -95,7 +93,7 @@ namespace ParsaProto
                     t += Time.unscaledDeltaTime;
                     seqTime += Time.unscaledDeltaTime;
 
-                    // fade to black, then go transparent as the grip closes.
+                    // go transparent as the grip closes; normal colors kept.
                     // enforced every frame so nothing else can recolor him.
                     float p = 0f;
                     if (frameNo >= shrinkStartFrame && frameNo < claimFrame)
@@ -103,9 +101,8 @@ namespace ParsaProto
 
                     if (_playerSprite != null)
                     {
-                        float k = Mathf.Clamp01(seqTime / Mathf.Max(0.01f, tintFadeTime));
-                        Color c = Color.Lerp(originalTint, Color.black, k);
-                        c.a = 1f - p;
+                        Color c = originalTint;
+                        c.a = originalTint.a * (1f - p);
                         _playerSprite.color = c;
                     }
 

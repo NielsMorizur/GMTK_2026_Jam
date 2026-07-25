@@ -23,9 +23,10 @@ public class Player_JumpState : Player_AiredState
     {
         base.Update();
 
-        // Variable jump height: cut the ascent short if the button is released
-        // early, but never so short that the jump peaks below minJumpHeightBlocks.
-        if (AllowJumpCut && input.Player.Jump.WasReleasedThisFrame() && rb.linearVelocity.y > 0f)
+        // Variable jump height (off by default, toggle on the Player): cut the
+        // ascent short on early release, but never below minJumpHeightBlocks.
+        if (player.variableJumpHeight && AllowJumpCut
+            && input.Player.Jump.WasReleasedThisFrame() && rb.linearVelocity.y > 0f)
         {
             float vy = rb.linearVelocity.y;
             float cut = vy * player.jumpCutMultiplier;
