@@ -12,6 +12,12 @@ public class GrapplePoint : MonoBehaviour
     [Tooltip("Pulse speed while glowing.")]
     public float pulseSpeed = 3f;
 
+    [Tooltip("Hook art while idle.")]
+    public Sprite normalSprite;
+
+    [Tooltip("Hook art while targeted/attached.")]
+    public Sprite activeSprite;
+
     private SpriteRenderer sr;
     private Player player;
 
@@ -30,6 +36,10 @@ public class GrapplePoint : MonoBehaviour
         if (sr == null) return;
 
         bool targeted = player != null && player.CurrentGrappleTarget == this;
+
+        // hook art swaps with the state when both sprites are assigned
+        if (normalSprite != null && activeSprite != null)
+            sr.sprite = targeted ? activeSprite : normalSprite;
 
         if (targeted)
         {
