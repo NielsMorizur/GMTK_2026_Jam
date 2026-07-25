@@ -32,6 +32,10 @@ namespace ParsaProto
             var kb = Keyboard.current;
             if (kb == null) return;
 
+            // no inputs while the death hand has him
+            var deathHand = GetComponent<PP_DeathHand>();
+            if (deathHand != null && deathHand.IsPlaying) return;
+
             if (kb.rKey.wasPressedThisFrame)
             {
                 var reset = GetComponent<PP_LevelReset>();

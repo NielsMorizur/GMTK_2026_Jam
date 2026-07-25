@@ -30,6 +30,17 @@ namespace ParsaProto
             _fallbackSpawn = transform.position;
         }
 
+        /// <summary>Death entry: the hand claims him first (game paused),
+        /// then the normal reset runs.</summary>
+        public void DieAndReset()
+        {
+            var hand = GetComponent<PP_DeathHand>();
+            if (hand != null)
+                hand.PlayClaim(ResetLevel);
+            else
+                ResetLevel();
+        }
+
         public void ResetLevel()
         {
             var spawn = Object.FindAnyObjectByType<PP_SpawnPoint>();
