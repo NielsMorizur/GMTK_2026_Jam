@@ -30,7 +30,7 @@ namespace ParsaProto
             _fallbackSpawn = transform.position;
         }
 
-        /// <summary>Death entry: the hand claims him first (game paused),
+        /// <summary>Time-out death: the hand claims him first (game paused),
         /// then the normal reset runs.</summary>
         public void DieAndReset()
         {
@@ -39,6 +39,19 @@ namespace ParsaProto
                 hand.PlayClaim(ResetLevel);
             else
                 ResetLevel();
+        }
+
+        /// <summary>Hazard death: he becomes a ghost, then the reset runs.
+        /// Falls back to the hand, then to a plain reset.</summary>
+        public void DieAsGhost()
+        {
+            var ghost = GetComponent<PP_DeathGhost>();
+            if (ghost != null)
+            {
+                ghost.PlayGhost(ResetLevel);
+                return;
+            }
+            DieAndReset();
         }
 
         public void ResetLevel()
