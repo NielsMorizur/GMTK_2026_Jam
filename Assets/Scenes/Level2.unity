@@ -9486,6 +9486,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 103, guid: aa10a1b2c3d4e5f60718293a4b5c6de1, type: 3}
+      propertyPath: m_Sprite
+      value:
+      objectReference: {fileID: 21300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60a12, type: 3}
+    - target: {fileID: 103, guid: aa10a1b2c3d4e5f60718293a4b5c6de1, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 103, guid: aa10a1b2c3d4e5f60718293a4b5c6de1, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 103, guid: aa10a1b2c3d4e5f60718293a4b5c6de1, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 103, guid: aa10a1b2c3d4e5f60718293a4b5c6de1, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 101, guid: aa10a1b2c3d4e5f60718293a4b5c6de1, type: 3}
       propertyPath: m_Name
       value: PP_LevelExit
