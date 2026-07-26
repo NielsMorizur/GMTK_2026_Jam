@@ -7,6 +7,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string[] levelSequence = {"Level1", "Level2", "Level3", "Level4", "End"};
     [SerializeField] private int currentLevelIndex = 0;
 
+    // currentLevelIndex already tracks this: it starts at 0 (no levels done)
+    // and increments by 1 each time LevelComplete() runs, so its value IS
+    // the count of levels completed so far.
+    public int LevelsCompleted => currentLevelIndex;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -16,12 +21,6 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject); // keeps same GameManager when switching scenes
-    }
-
-
-    void Update()
-    {
-        
     }
 
     public void LevelComplete()
