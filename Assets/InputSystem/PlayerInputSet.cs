@@ -198,6 +198,17 @@ public partial class @PlayerInputSet: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""7c1a2e64-90b3-4a51-8f2d-3aa7c05d1e88"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard & Mouse"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""9375f58c-f086-459e-9d40-c28e74df524d"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
@@ -222,6 +233,17 @@ public partial class @PlayerInputSet: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""31146fed-559d-4b8b-b833-58e3089d56f9"",
                     ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard & Mouse"",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e5f8b0d2-6c47-4b9e-a1d3-9f20c6a4b711"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard & Mouse"",

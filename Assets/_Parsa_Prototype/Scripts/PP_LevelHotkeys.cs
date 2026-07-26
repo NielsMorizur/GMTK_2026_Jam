@@ -101,7 +101,10 @@ namespace ParsaProto
                 return;
             }
 
-            bool kPressed = kb.kKey.wasPressedThisFrame;
+            // right click swaps too, same rules as K
+            var mouse = Mouse.current;
+            bool kPressed = kb.kKey.wasPressedThisFrame
+                || (mouse != null && mouse.rightButton.wasPressedThisFrame);
             string kCtx = kPressed ? DbgK() : null;
 
             if (kb.rKey.wasPressedThisFrame)

@@ -43,7 +43,10 @@ namespace ParsaProto
             if (PP_DeathHand.AnyPlaying) return;
 
             var kb = Keyboard.current;
-            if (kb == null || !kb.kKey.wasPressedThisFrame) return;
+            var mouse = Mouse.current;
+            bool pressed = (kb != null && kb.kKey.wasPressedThisFrame)
+                || (mouse != null && mouse.rightButton.wasPressedThisFrame);
+            if (!pressed) return;
 
             // anti-double-fire only: short cooldown since the last swap
             var fx = GetComponent<PP_FormSwapEffects>();

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace ParsaProto
@@ -20,11 +21,19 @@ namespace ParsaProto
 
         [Tooltip("The panel ESC / P shows and hides")]
         public GameObject panel;
+        [Tooltip("Tick to see the panel in the editor for layout work; play mode always starts hidden")]
+        public bool showPanelInEditor;
         public Toggle shakeToggle;
         public Slider masterSlider;
         public Slider sfxSlider;
         public Slider musicSlider;
         public Button mainMenuButton;
+
+        [Header("Controls page")]
+        public GameObject settingsPage;
+        public GameObject controlsPage;
+        public Button controlsButton;
+        public Button controlsBackButton;
 
         void Awake()
         {
@@ -35,6 +44,10 @@ namespace ParsaProto
             }
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // the menu scene owns its own EventSystem; a persisted pause
+            // EventSystem shadows it and every menu button goes dead
+            SceneManager.activeSceneChanged += OnSceneChanged;
 
             if (shakeToggle != null)
             {
@@ -69,6 +82,11 @@ namespace ParsaProto
                 });
             }
 
+            if (controlsButton != null)
+                controlsButton.onClick.AddListener(() => ShowControls(true));
+            if (controlsBackButton != null)
+                controlsBackButton.onClick.AddListener(() => ShowControls(false));
+
             // make sure the UI input module has actions to click with
             var module = GetComponentInChildren<InputSystemUIInputModule>(true);
             if (module != null && module.actionsAsset == null)
@@ -77,6 +95,45 @@ namespace ParsaProto
             if (panel != null)
                 panel.SetActive(false);
         }
+
+        void OnSceneChanged(Scene from, Scene to)
+        {
+            if (to.name != "MainMenu") return;
+            IsOpen = false;
+            Time.timeScale = 1f;
+            SceneManager.activeSceneChanged -= OnSceneChanged;
+            Destroy(gameObject);
+        }
+
+        void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+                SceneManager.activeSceneChanged -= OnSceneChanged;
+            }
+        }
+
+        void ShowControls(bool on)
+        {
+            if (settingsPage != null) settingsPage.SetActive(!on);
+            if (controlsPage != null) controlsPage.SetActive(on);
+        }
+
+#if UNITY_EDITOR
+        // the editor checkbox shows/hides the panel for layout work; SetActive
+        // is not allowed inside OnValidate itself, hence the delayCall
+        void OnValidate()
+        {
+            if (Application.isPlaying || panel == null) return;
+            var p = panel;
+            bool show = showPanelInEditor;
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                if (p != null && p.activeSelf != show) p.SetActive(show);
+            };
+        }
+#endif
 
         void Update()
         {
@@ -87,6 +144,7 @@ namespace ParsaProto
             if (kb.escapeKey.wasPressedThisFrame || kb.pKey.wasPressedThisFrame)
             {
                 bool open = !panel.activeSelf;
+                if (open) ShowControls(false);   // always land on the settings page
                 panel.SetActive(open);
                 IsOpen = open;
                 Time.timeScale = open ? 0f : 1f;

@@ -18,6 +18,8 @@ namespace ParsaProto
         public bool hideAfterSwap = true;
         [Tooltip("Only show once swapping is actually unlocked (Level2+ reached, i.e. more than one form)")]
         public bool onlyWhenSwapAvailable = false;
+        [Tooltip("Only show while the player is in any form besides the elder (R-to-reset hint)")]
+        public bool onlyWhenNotElder = false;
 
         [Header("Prompt look")]
         public float heightAbovePlayer = 1.5f;
@@ -59,7 +61,8 @@ namespace ParsaProto
             bool inside = Mathf.Abs(p.x - _zoneCenter.x) <= zoneSize.x * 0.5f
                           && Mathf.Abs(p.y - _zoneCenter.y) <= zoneSize.y * 0.5f;
             bool show = inside && !_used && !PP_DeathHand.AnyPlaying
-                        && (!onlyWhenSwapAvailable || SwapUnlocked());
+                        && (!onlyWhenSwapAvailable || SwapUnlocked())
+                        && (!onlyWhenNotElder || _player.CurrentAge != AgeStage.Elderly);
 
             _alpha = Mathf.MoveTowards(_alpha, show ? 1f : 0f,
                 fadeSpeed * Time.deltaTime * 0.25f);

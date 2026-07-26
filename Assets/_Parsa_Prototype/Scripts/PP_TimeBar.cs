@@ -143,6 +143,7 @@ namespace ParsaProto
                 if (PP_TimerGate.WakeInput(_standalonePlayer)) _standaloneArmed = false;
             }
             bool running = standaloneRun && !PP_DeathHand.AnyPlaying
+                           && !PP_PauseMenu.IsOpen
                            && (_standalonePlayer == null || !_standaloneArmed);
 
             if (running)

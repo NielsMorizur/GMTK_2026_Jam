@@ -36,6 +36,7 @@ namespace ParsaProto
         void Awake()
         {
             Time.timeScale = 1f;   // whatever happened before, the menu runs clean
+            PP_DeathCounter.Reset();   // fresh run, fresh tally
 
             var module = GetComponentInChildren<InputSystemUIInputModule>(true);
             if (module != null && module.actionsAsset == null)

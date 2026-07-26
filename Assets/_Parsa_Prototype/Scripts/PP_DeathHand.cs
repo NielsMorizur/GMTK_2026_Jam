@@ -52,6 +52,7 @@ namespace ParsaProto
                 onDone?.Invoke();
                 return;
             }
+            PP_DeathCounter.Add();
             StartCoroutine(Claim(onDone));
         }
 

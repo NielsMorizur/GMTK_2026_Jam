@@ -17,6 +17,8 @@ namespace ParsaProto
         [Tooltip("Activated once the screen is black")]
         public GameObject buttonRoot;
         public Button againButton;
+        [Tooltip("Shows the run's death tally above the button")]
+        public TMPro.TextMeshProUGUI deathsText;
         public string targetScene = "MainMenu";
 
         float _t;
@@ -47,6 +49,9 @@ namespace ParsaProto
             if (!_shown && _t >= fadeAt + fadeTime)
             {
                 _shown = true;
+                if (deathsText != null)
+                    deathsText.text = PP_DeathCounter.Count == 1
+                        ? "1 death" : PP_DeathCounter.Count + " deaths";
                 if (buttonRoot != null) buttonRoot.SetActive(true);
             }
         }

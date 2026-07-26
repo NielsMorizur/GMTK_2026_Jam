@@ -83,6 +83,11 @@ namespace ParsaProto
 
             if (kb.anyKey.wasPressedThisFrame) return true;
 
+            // mouse gameplay clicks (jump / swap) count as a fresh press too
+            var mouse = Mouse.current;
+            if (mouse != null && (mouse.leftButton.wasPressedThisFrame
+                || mouse.rightButton.wasPressedThisFrame)) return true;
+
             // held-key wake counts MOVEMENT keys only - a held R from the
             // reset (or any other non-gameplay key) plus respawn physics
             // settle must not start the clock by itself
