@@ -66,8 +66,22 @@ namespace ParsaProto
             Advance();
         }
 
+        [Tooltip("TESTING: R instantly restarts the intro; untick for the shipped build")]
+        public bool allowResetKey = true;
+
         void Update()
         {
+            if (allowResetKey)
+            {
+                var kb = UnityEngine.InputSystem.Keyboard.current;
+                if (kb != null && kb.rKey.wasPressedThisFrame)
+                {
+                    PP_ScreenFade.CutTo(
+                        UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+                    return;
+                }
+            }
+
             // full cinematic: no player input, everything runs on the clock
             _sectionTime += Time.unscaledDeltaTime;
 

@@ -360,9 +360,9 @@ MonoBehaviour:
   - line: I've been watching you
     stageSet: {fileID: 6760000010}
     notify: {fileID: 0}
-    textDelay: 1.4
+    textDelay: 1.5
     keepAlive: 0
-    duration: 3
+    duration: 4
     textFadeOut: 2
   - line: 
     stageSet: {fileID: 6760000020}
@@ -400,6 +400,7 @@ MonoBehaviour:
   textFadeOut: 0.4
   exitGrace: 0.9
   wordRise: 0.1
+  allowResetKey: 1
 --- !u!1 &920000020
 GameObject:
   m_ObjectHideFlags: 0
@@ -642,7 +643,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8d9e0f1a2b3c4d5e6f7a8b9c0d10906, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startDelay: 0.8
+  startDelay: 1.5
   fadeIn: 0.05
   hold: -1
   fadeOut: 1

@@ -77,13 +77,13 @@ namespace ParsaProto
             if (t > 0f && !_sfxPlayed && appearSfx != null)
             {
                 _sfxPlayed = true;
-                if (_audio == null)
-                {
-                    _audio = gameObject.AddComponent<AudioSource>();
-                    _audio.playOnAwake = false;
-                    _audio.spatialBlend = 0f;
-                }
-                _audio.PlayOneShot(appearSfx, appearVolume * PP_Settings.SfxVolume);
+                // detached source: the bell keeps ringing even after this
+                // still's section retires and deactivates it
+                var go = new GameObject("PP_StillSfx");
+                var src = go.AddComponent<AudioSource>();
+                src.spatialBlend = 0f;
+                src.PlayOneShot(appearSfx, appearVolume * PP_Settings.SfxVolume);
+                Destroy(go, appearSfx.length + 0.5f);
             }
 
             float a;

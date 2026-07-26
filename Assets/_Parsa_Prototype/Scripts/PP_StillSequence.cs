@@ -49,6 +49,13 @@ namespace ParsaProto
             _t = 0f;
             _exiting = false;
             _lineShown = new bool[stills != null ? stills.Length : 0];
+
+            // hide everything IMMEDIATELY on activation - waiting for the
+            // first Update leaves the editor-preview alphas visible for a
+            // frame (the section-change flash)
+            if (Application.isPlaying && stills != null)
+                foreach (var s in stills)
+                    if (s != null) Apply(s, 0f);
         }
 
         /// <summary>Director hook: fade everything down now.</summary>
