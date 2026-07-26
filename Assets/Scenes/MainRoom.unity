@@ -10783,9 +10783,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8d9e0f1a2b3c4d5e6f7a8b9c0d10918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startZoom: 3
-  hold: 0.7
+  startZoom: 3.22
+  hold: 1
   zoomTime: 1.1
+  frameOffset: {x: 4.21, y: 0.93}
+  showFramePreview: 1
 --- !u!1001 &8800000000000000601
 PrefabInstance:
   m_ObjectHideFlags: 0

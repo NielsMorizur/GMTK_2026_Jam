@@ -16,6 +16,10 @@ namespace ParsaProto
         public float hold = 0.7f;
         [Tooltip("Seconds the zoom-out takes")]
         public float zoomTime = 1.1f;
+        [Tooltip("Where the close-up centers, relative to the player")]
+        public Vector2 frameOffset = new Vector2(0f, 0.3f);
+        [Tooltip("Draw the close-up frame in the Scene view (never visible in game)")]
+        public bool showFramePreview = true;
 
         Camera _cam;
         float _homeSize;
@@ -35,9 +39,14 @@ namespace ParsaProto
                 _done = true;
                 return;
             }
-            transform.position = new Vector3(_player.transform.position.x,
-                _player.transform.position.y, _homePos.z);
+            transform.position = FramePos();
             _cam.orthographicSize = startZoom;
+        }
+
+        Vector3 FramePos()
+        {
+            return new Vector3(_player.transform.position.x + frameOffset.x,
+                _player.transform.position.y + frameOffset.y, _homePos.z);
         }
 
         void LateUpdate()
@@ -45,9 +54,7 @@ namespace ParsaProto
             if (_done) return;
             _t += Time.unscaledDeltaTime;
 
-            Vector3 onPlayer = _player != null
-                ? new Vector3(_player.transform.position.x, _player.transform.position.y, _homePos.z)
-                : _homePos;
+            Vector3 onPlayer = _player != null ? FramePos() : _homePos;
 
             if (_t < hold)
             {
@@ -66,6 +73,21 @@ namespace ParsaProto
                 transform.position = _homePos;
                 _cam.orthographicSize = _homeSize;
             }
+        }
+
+        // yellow box in the Scene view = exactly what the opening close-up
+        // frames; drag Frame Offset / Start Zoom and watch it move
+        void OnDrawGizmos()
+        {
+            if (!showFramePreview || Application.isPlaying) return;
+            var player = FindAnyObjectByType<Player>();
+            if (player == null) return;
+            var cam = GetComponent<Camera>();
+            float aspect = cam != null ? cam.aspect : 16f / 9f;
+            Vector3 c = new Vector3(player.transform.position.x + frameOffset.x,
+                player.transform.position.y + frameOffset.y, 0f);
+            Gizmos.color = new Color(1f, 0.9f, 0.2f, 0.9f);
+            Gizmos.DrawWireCube(c, new Vector3(2f * startZoom * aspect, 2f * startZoom, 0.1f));
         }
     }
 }
