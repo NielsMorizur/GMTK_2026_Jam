@@ -98,7 +98,9 @@ namespace ParsaProto
 
         void OnSceneChanged(Scene from, Scene to)
         {
-            if (to.name != "MainMenu") return;
+            // menu and outro own their own EventSystem; a persisted pause one
+            // shadows it and every button in those scenes goes dead
+            if (to.name != "MainMenu" && to.name != "Outro") return;
             IsOpen = false;
             Time.timeScale = 1f;
             SceneManager.activeSceneChanged -= OnSceneChanged;

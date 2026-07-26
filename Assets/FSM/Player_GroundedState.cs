@@ -13,7 +13,8 @@ public class Player_GroundedState : EntityState
         if (rb.linearVelocity.y < -0.1f)   // tolerance: resting contact jitters microscopically below zero
             stateMachine.ChangeState(player.fallState);
 
-        if (input.Player.Jump.WasPerformedThisFrame() && player.Stats.canJump)
+        if (input.Player.Jump.WasPerformedThisFrame() && player.Stats.canJump
+            && !ParsaProto.PP_MouseInput.MouseOnlyJumpThisFrame)
             stateMachine.ChangeState(player.jumpState);
     }
 }

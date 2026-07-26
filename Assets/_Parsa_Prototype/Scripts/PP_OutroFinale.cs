@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
@@ -31,11 +32,30 @@ namespace ParsaProto
             if (againButton != null)
                 againButton.onClick.AddListener(() => PP_ScreenFade.CutTo(targetScene));
 
-            // the UI input module arrives with no actions in this scene
-            // (the menu assigns them itself) - without this, no clicks/hover
-            var module = FindAnyObjectByType<InputSystemUIInputModule>();
-            if (module != null && module.actionsAsset == null)
-                module.AssignDefaultActions();
+            Time.timeScale = 1f;
+        }
+
+        void Start()
+        {
+            // every module in the scene needs actions, not just the first one
+            // found: a persisted one from gameplay can shadow this scene's own
+            var modules = FindObjectsByType<InputSystemUIInputModule>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var m in modules)
+                if (m.actionsAsset == null) m.AssignDefaultActions();
+
+            // and exactly one EventSystem may be live, or clicks go nowhere
+            var systems = FindObjectsByType<EventSystem>(
+                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            EventSystem mine = null;
+            foreach (var es in systems)
+                if (es.gameObject.scene == gameObject.scene) mine = es;
+            if (mine != null)
+            {
+                foreach (var es in systems)
+                    if (es != mine) es.gameObject.SetActive(false);
+                EventSystem.current = mine;
+            }
         }
 
         void Update()

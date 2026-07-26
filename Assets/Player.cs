@@ -268,7 +268,9 @@ public class Player : MonoBehaviour
     {
         coyoteTimer = groundDetected ? coyoteTime : coyoteTimer - Time.deltaTime;
 
-        if (input.Player.Jump.WasPerformedThisFrame())
+        // left click can double jump and grapple, but never ground-jump
+        if (input.Player.Jump.WasPerformedThisFrame()
+            && !ParsaProto.PP_MouseInput.MouseOnlyJumpThisFrame)
             jumpBufferTimer = jumpBufferTime;
         else
             jumpBufferTimer -= Time.deltaTime;
