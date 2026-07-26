@@ -19,7 +19,8 @@ public class Player_AiredState : EntityState
         base.Update();
 
         if (Time.frameCount != enterFrame
-            && input.Player.Jump.WasPerformedThisFrame() && player.Stats.canDoubleJump && player.hasDoubleJump)
+            && input.Player.Jump.WasPerformedThisFrame() && player.Stats.canDoubleJump && player.hasDoubleJump
+            && !ParsaProto.PP_MouseInput.MouseOnlyJumpThisFrame)
         {
             stateMachine.ChangeState(player.doubleJumpState);
             player.hasDoubleJump = false;

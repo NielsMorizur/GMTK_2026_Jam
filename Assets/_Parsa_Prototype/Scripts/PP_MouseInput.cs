@@ -3,8 +3,8 @@ using UnityEngine.InputSystem;
 namespace ParsaProto
 {
     /// <summary>
-    /// Left click is bound to Jump so it can double jump and grapple, but the
-    /// ground jump stays keyboard-only. The grounded jump paths ask here.
+    /// Left click is bound to Jump so it can grapple and dash, but jumping
+    /// (ground and double) stays on Space. Those paths ask here first.
     /// </summary>
     public static class PP_MouseInput
     {

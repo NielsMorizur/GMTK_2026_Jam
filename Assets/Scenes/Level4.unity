@@ -12356,12 +12356,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6744000300}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -7.49, y: 1.68, z: 0}
   m_LocalScale: {x: 0.98670006, y: 0.98670006, z: 0.3289}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 6782000002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6744000302
 SpriteRenderer:
@@ -12464,12 +12464,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6744000310}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
+  m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
   m_LocalPosition: {x: 7.5, y: -0.7, z: 0}
   m_LocalScale: {x: 0.98670006, y: 0.98670006, z: 0.3289}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 6782000002}
   m_LocalEulerAnglesHint: {x: 180, y: 0, z: 180}
 --- !u!212 &6744000312
 SpriteRenderer:
@@ -12835,6 +12835,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6744000301}
+  - {fileID: 6744000311}
   - {fileID: 6782000011}
   - {fileID: 6782000021}
   - {fileID: 6782000031}
@@ -12872,7 +12874,7 @@ Transform:
   m_GameObject: {fileID: 6782000010}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.02, y: 6.84, z: 0}
+  m_LocalPosition: {x: 12.27, y: -2.5, z: 0}
   m_LocalScale: {x: 0.16395833, y: 0.16395833, z: 0.4229}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12979,7 +12981,7 @@ Transform:
   m_GameObject: {fileID: 6782000020}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.6, y: -4.24, z: 0}
+  m_LocalPosition: {x: -13.03, y: -3.67, z: 0}
   m_LocalScale: {x: 0.16395833, y: 0.16395833, z: 0.4229}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13071,7 +13073,7 @@ Transform:
   m_GameObject: {fileID: 6782000030}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.79, y: 7.69, z: 0}
+  m_LocalPosition: {x: -0.8, y: 3.09, z: 0}
   m_LocalScale: {x: 0.16395833, y: 0.16395833, z: 0.4229}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13163,7 +13165,7 @@ Transform:
   m_GameObject: {fileID: 6782000040}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.88, y: -6.51, z: 0}
+  m_LocalPosition: {x: 1.39, y: -7.61, z: 0}
   m_LocalScale: {x: 0.16395833, y: 0.16395833, z: 0.4229}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13256,7 +13258,7 @@ Transform:
   m_GameObject: {fileID: 6782000050}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.1, y: 6.76, z: 0}
+  m_LocalPosition: {x: -14.17, y: 7.18, z: 0}
   m_LocalScale: {x: 0.16395833, y: 0.16395833, z: 0.4229}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13363,7 +13365,7 @@ Transform:
   m_GameObject: {fileID: 6782000060}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.84, y: -3.37, z: 0}
+  m_LocalPosition: {x: 3.82, y: 6.72, z: 0}
   m_LocalScale: {x: 0.16395833, y: 0.16395833, z: 0.4229}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13455,7 +13457,7 @@ Transform:
   m_GameObject: {fileID: 6782000070}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.99, y: 3.55, z: 0}
+  m_LocalPosition: {x: -13.08, y: -8.77, z: 0}
   m_LocalScale: {x: 0.16395833, y: 0.16395833, z: 0.4229}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13547,7 +13549,7 @@ Transform:
   m_GameObject: {fileID: 6782000080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.68, y: -3.13, z: 0}
+  m_LocalPosition: {x: 13.82, y: 4.87, z: 0}
   m_LocalScale: {x: 0.16395833, y: 0.16395833, z: 0.4229}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13796,9 +13798,7 @@ SceneRoots:
   - {fileID: 6744000101}
   - {fileID: 6744000105}
   - {fileID: 6744000109}
-  - {fileID: 6744000301}
   - {fileID: 371349743}
-  - {fileID: 6744000311}
   - {fileID: 6782000002}
   - {fileID: 6772000012}
   - {fileID: 6772000022}

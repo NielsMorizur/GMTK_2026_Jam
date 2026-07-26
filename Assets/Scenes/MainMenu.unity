@@ -1455,11 +1455,13 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'A / D  -  move
 
-    Space or Left Click  -  jump, double jump, grapple
+    Space  -  jump, double jump
+
+    Left Click  -  grapple
 
     J / Shift / Left Click  -  dash
 
-    K or Right Click  -  age down
+    K / Right Click  -  age down
 
     R  -  restart level
 
