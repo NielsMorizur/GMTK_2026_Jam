@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class SceneTransitionTrigger : MonoBehaviour
 {
     [Header("Scene to load")]
-    [SerializeField] private string sceneToLoad = "Outro";
+    [SerializeField] private string levelToLoad = "Outro";
 
     private bool hasTriggered = false;
 
@@ -20,6 +20,7 @@ public class SceneTransitionTrigger : MonoBehaviour
         if (player != null)
             FreezePlayer(player);
 
+        ParsaProto.PP_ScreenFade.LoadScene(levelToLoad);
     }
 
     private void FreezePlayer(Player player)
