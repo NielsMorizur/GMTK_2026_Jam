@@ -5,7 +5,7 @@ public class EnterDoor4 : MonoBehaviour
 {
     [SerializeField] private Player player;
 
-    public string levelToLoad = "Level4";
+    public string levelToLoad = "ExitRoom";
     private bool playerInRange = false;
 
     GameManager gm;
