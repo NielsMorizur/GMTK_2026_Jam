@@ -1,0 +1,9 @@
+<linker>
+  <!--
+    WebGL builds strip managed code. Several systems reach private fields on
+    LevelAgeController by reflection (timer gating, R reset, K swap, the cake,
+    the door prompt), and the stripper cannot see those uses, so it is free to
+    remove them and the features die silently in the build only.
+  -->
+  <assembly fullname="Assembly-CSharp" preserve="all" />
+</linker>

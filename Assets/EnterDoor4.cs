@@ -12,7 +12,7 @@ public class EnterDoor4 : MonoBehaviour
 
     void Awake()
     {
-        gm = GameManager.Instance;
+        gm = GameManager.Instance;   // may still be null here; Update retries
 
         if (player == null)
             player = FindAnyObjectByType<Player>();
@@ -32,9 +32,18 @@ public class EnterDoor4 : MonoBehaviour
 
     void Update()
     {
-        if (playerInRange && player.input.Player.Interact.WasPerformedThisFrame() && gm.GetLevel() == levelToLoad)
-        {
-            ParsaProto.PP_ScreenFade.LoadScene(levelToLoad);
-        }
+        if (!playerInRange) return;
+
+        // resolved late, not cached in Awake: in a build the GameManager can
+        // wake after the doors do, and a cached null (or a stale one from the
+        // last run) makes E do nothing at all
+        if (player == null) player = FindAnyObjectByType<Player>();
+        if (gm == null || gm.gameObject == null) gm = GameManager.Instance;
+        if (player == null || player.input == null) return;
+
+        if (!player.input.Player.Interact.WasPerformedThisFrame()) return;
+        if (gm != null && gm.GetLevel() != levelToLoad) return;
+
+        ParsaProto.PP_ScreenFade.LoadScene(levelToLoad);
     }
 }
