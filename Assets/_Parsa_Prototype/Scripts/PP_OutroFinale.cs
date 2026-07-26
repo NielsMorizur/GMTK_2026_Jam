@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 namespace ParsaProto
@@ -27,6 +28,12 @@ namespace ParsaProto
             if (buttonRoot != null) buttonRoot.SetActive(false);
             if (againButton != null)
                 againButton.onClick.AddListener(() => PP_ScreenFade.CutTo(targetScene));
+
+            // the UI input module arrives with no actions in this scene
+            // (the menu assigns them itself) - without this, no clicks/hover
+            var module = FindAnyObjectByType<InputSystemUIInputModule>();
+            if (module != null && module.actionsAsset == null)
+                module.AssignDefaultActions();
         }
 
         void Update()

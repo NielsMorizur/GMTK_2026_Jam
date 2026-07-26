@@ -83,7 +83,16 @@ namespace ParsaProto
 
             if (kb.anyKey.wasPressedThisFrame) return true;
 
-            return kb.anyKey.isPressed
+            // held-key wake counts MOVEMENT keys only - a held R from the
+            // reset (or any other non-gameplay key) plus respawn physics
+            // settle must not start the clock by itself
+            bool movementHeld = kb.aKey.isPressed || kb.dKey.isPressed
+                || kb.wKey.isPressed || kb.sKey.isPressed
+                || kb.leftArrowKey.isPressed || kb.rightArrowKey.isPressed
+                || kb.upArrowKey.isPressed || kb.downArrowKey.isPressed
+                || kb.spaceKey.isPressed;
+
+            return movementHeld
                    && player != null && player.rb != null
                    && player.rb.linearVelocity.magnitude > 0.5f;
         }
