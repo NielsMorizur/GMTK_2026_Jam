@@ -14,6 +14,8 @@ namespace ParsaProto
     public class PP_MainMenu : MonoBehaviour
     {
         public string enterScene = "MainRoom";
+        [Tooltip("Enter cuts instantly instead of fading to black")]
+        public bool enterCut = true;
 
         [Header("Panels")]
         public GameObject homePanel;
@@ -40,7 +42,11 @@ namespace ParsaProto
                 module.AssignDefaultActions();
 
             if (enterButton != null)
-                enterButton.onClick.AddListener(() => PP_ScreenFade.LoadScene(enterScene));
+                enterButton.onClick.AddListener(() =>
+                {
+                    if (enterCut) PP_ScreenFade.CutTo(enterScene);
+                    else PP_ScreenFade.LoadScene(enterScene);
+                });
             if (controlsButton != null)
                 controlsButton.onClick.AddListener(() => Show(controlsPanel));
             if (settingsButton != null)

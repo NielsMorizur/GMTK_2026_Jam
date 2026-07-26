@@ -19,6 +19,11 @@ namespace ParsaProto
         public float fadeOut = 2f;
         [Range(0f, 1f)] public float maxAlpha = 1f;
 
+        [Header("Sound")]
+        [Tooltip("Played once as the fade-in begins")]
+        public AudioClip appearSfx;
+        [Range(0f, 1f)] public float appearVolume = 0.8f;
+
         SpriteRenderer _sr;
         float _t;
 
@@ -26,6 +31,27 @@ namespace ParsaProto
         {
             _sr = GetComponent<SpriteRenderer>();
             if (Application.isPlaying) Apply(0f);
+        }
+
+        // re-activation (a director section starting) replays from the top
+        void OnEnable()
+        {
+            if (!Application.isPlaying) return;
+            _t = 0f;
+            _exiting = false;
+            _sfxPlayed = false;
+            if (_sr != null) Apply(0f);
+        }
+
+        bool _sfxPlayed;
+        AudioSource _audio;
+
+        bool _exiting;
+
+        /// <summary>Director hook: fade out now, whatever the timers say.</summary>
+        void IntroSectionExit()
+        {
+            _exiting = true;
         }
 
         void Update()
@@ -37,8 +63,28 @@ namespace ParsaProto
                 return;
             }
 
+            if (_exiting)
+            {
+                var ec = _sr.color;
+                Apply(Mathf.MoveTowards(ec.a, 0f,
+                    Time.unscaledDeltaTime / Mathf.Max(0.05f, fadeOut)));
+                return;
+            }
+
             _t += Time.unscaledDeltaTime;
             float t = _t - startDelay;
+
+            if (t > 0f && !_sfxPlayed && appearSfx != null)
+            {
+                _sfxPlayed = true;
+                if (_audio == null)
+                {
+                    _audio = gameObject.AddComponent<AudioSource>();
+                    _audio.playOnAwake = false;
+                    _audio.spatialBlend = 0f;
+                }
+                _audio.PlayOneShot(appearSfx, appearVolume * PP_Settings.SfxVolume);
+            }
 
             float a;
             if (t <= 0f) a = 0f;

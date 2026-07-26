@@ -49,7 +49,15 @@ namespace ParsaProto
 
             SceneManager.sceneLoaded += (s, m) =>
             {
-                if (_i != null) _i.StartFade(1f, 0f, fadeInTime, null);
+                if (_i == null) return;
+                if (_cutNextArrival)
+                {
+                    _cutNextArrival = false;
+                    _i._dur = -1f;
+                    _i.Apply(0f);
+                    return;
+                }
+                _i.StartFade(1f, 0f, fadeInTime, null);
             };
         }
 
@@ -65,6 +73,16 @@ namespace ParsaProto
         {
             if (_i == null) { SceneManager.LoadScene(scene); return; }
             _i.StartFade(_i._alpha, 1f, fadeOutTime, () => SceneManager.LoadScene(scene));
+        }
+
+        static bool _cutNextArrival;
+
+        /// <summary>Hard cut: no fade out, no arrival fade - one frame it's
+        /// the old scene, the next it's the new one.</summary>
+        public static void CutTo(string scene)
+        {
+            _cutNextArrival = true;
+            SceneManager.LoadScene(scene);
         }
 
         /// <summary>Fade to black, run the action under cover, fade back in.
