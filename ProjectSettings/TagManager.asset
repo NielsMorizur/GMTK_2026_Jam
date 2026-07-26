@@ -47,6 +47,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Hazards
+    uniqueID: 2022616069
+    locked: 0
   - name: Tiles
     uniqueID: 1962486115
     locked: 0
