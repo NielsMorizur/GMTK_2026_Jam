@@ -522,7 +522,7 @@ MonoBehaviour:
   framesPerSecond: 22
   startHoldFrames: 3
   startHoldMultiplier: 2.2
-  riseSpeed: 1.2
+  riseSpeed: 0
   holdAfter: 0.15
   ghost: {fileID: 7788990011223344613}
 --- !u!114 &7788990011223344624
@@ -880,7 +880,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7788990011223344612
 Transform:
   m_ObjectHideFlags: 0

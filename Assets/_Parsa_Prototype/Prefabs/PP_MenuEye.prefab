@@ -26,7 +26,7 @@ RectTransform:
   m_GameObject: {fileID: 5900000000000000001}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.67, y: 0.67, z: 0.67}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5900000000000000012}
@@ -37,7 +37,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5900000000000000003
@@ -54,12 +54,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iris: {fileID: 5900000000000000032}
   lid: {fileID: 5900000000000000041}
-  maxIrisOffset: 26
-  trackSpeed: 14
-  closeDelay: 1.5
-  blinkIntervalMin: 2.5
-  blinkIntervalMax: 4.5
+  maxIrisOffset: 35
+  trackSpeed: 3
+  closeDelayMin: 5
+  closeDelayMax: 13
+  blinkIntervalMin: 2
+  blinkIntervalMax: 10
   blinkDuration: 0.4
+  blinkSfx: {fileID: 8300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60a23, type: 3}
+  blinkVolume: 0.34
+  blinkPitchJitter: 0.8
 --- !u!1 &5900000000000000011
 GameObject:
   m_ObjectHideFlags: 0
