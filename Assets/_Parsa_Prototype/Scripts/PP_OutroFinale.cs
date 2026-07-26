@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 namespace ParsaProto
@@ -37,25 +36,30 @@ namespace ParsaProto
 
         void Start()
         {
-            // every module in the scene needs actions, not just the first one
-            // found: a persisted one from gameplay can shadow this scene's own
-            var modules = FindObjectsByType<InputSystemUIInputModule>(
-                FindObjectsInactive.Include, FindObjectsSortMode.None);
-            foreach (var m in modules)
-                if (m.actionsAsset == null) m.AssignDefaultActions();
+            PP_UiInput.Ensure();   // one owner for mouse and keyboard, always
+        }
 
-            // and exactly one EventSystem may be live, or clicks go nowhere
-            var systems = FindObjectsByType<EventSystem>(
-                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            EventSystem mine = null;
-            foreach (var es in systems)
-                if (es.gameObject.scene == gameObject.scene) mine = es;
-            if (mine != null)
+        /// <summary>The button's canvas only wakes up at the end, so its click
+        /// plumbing is checked then: input owner alive, a raycaster on the
+        /// canvas (no raycaster means the mouse sails straight past it), and
+        /// the button selected so keyboard works without a first press.</summary>
+        void ArmButton()
+        {
+            PP_UiInput.Ensure();
+            if (againButton == null) return;
+
+            var canvas = againButton.GetComponentInParent<Canvas>();
+            if (canvas != null)
             {
-                foreach (var es in systems)
-                    if (es != mine) es.gameObject.SetActive(false);
-                EventSystem.current = mine;
+                var root = canvas.rootCanvas;
+                if (root.GetComponent<GraphicRaycaster>() == null)
+                    root.gameObject.AddComponent<GraphicRaycaster>();
+                if (root.transform.localScale == Vector3.zero)
+                    root.transform.localScale = Vector3.one;
             }
+
+            if (EventSystem.current != null)
+                EventSystem.current.SetSelectedGameObject(againButton.gameObject);
         }
 
         void Update()
@@ -73,6 +77,7 @@ namespace ParsaProto
                     deathsText.text = PP_DeathCounter.Count == 1
                         ? "1 death" : PP_DeathCounter.Count + " deaths";
                 if (buttonRoot != null) buttonRoot.SetActive(true);
+                ArmButton();
             }
         }
     }

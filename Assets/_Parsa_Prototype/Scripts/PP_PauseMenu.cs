@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -45,9 +44,6 @@ namespace ParsaProto
             }
             Instance = this;
             DontDestroyOnLoad(gameObject);
-
-            // the menu scene owns its own EventSystem; a persisted pause
-            // EventSystem shadows it and every menu button goes dead
             SceneManager.activeSceneChanged += OnSceneChanged;
 
             if (shakeToggle != null)
@@ -94,31 +90,13 @@ namespace ParsaProto
                 panel.SetActive(false);
         }
 
-        /// <summary>Make this menu's EventSystem the live one and give every
-        /// input module actions. Without both, the mouse does nothing: a
-        /// scene's own EventSystem (or a stale one) silently wins instead.</summary>
-        void ClaimInput()
-        {
-            var modules = FindObjectsByType<InputSystemUIInputModule>(
-                FindObjectsInactive.Include, FindObjectsSortMode.None);
-            foreach (var m in modules)
-                if (m.actionsAsset == null) m.AssignDefaultActions();
-
-            var mine = GetComponentInChildren<EventSystem>(true);
-            if (mine == null) return;
-            if (!mine.gameObject.activeSelf) mine.gameObject.SetActive(true);
-
-            var all = FindObjectsByType<EventSystem>(
-                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            foreach (var es in all)
-                if (es != mine) es.gameObject.SetActive(false);
-            EventSystem.current = mine;
-        }
+        /// <summary>One persistent owner handles UI input everywhere; this
+        /// just makes sure it exists and has retired any rival.</summary>
+        void ClaimInput() => PP_UiInput.Ensure();
 
         void OnSceneChanged(Scene from, Scene to)
         {
-            // menu and outro own their own EventSystem; a persisted pause one
-            // shadows it and every button in those scenes goes dead
+            // nothing to pause in the menu or the outro, so it stands down
             if (to.name != "MainMenu" && to.name != "Outro") return;
             IsOpen = false;
             Time.timeScale = 1f;

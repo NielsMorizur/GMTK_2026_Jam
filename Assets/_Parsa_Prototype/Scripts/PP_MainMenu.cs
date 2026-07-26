@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -38,9 +37,13 @@ namespace ParsaProto
             Time.timeScale = 1f;   // whatever happened before, the menu runs clean
             PP_DeathCounter.Reset();   // fresh run, fresh tally
 
-            var module = GetComponentInChildren<InputSystemUIInputModule>(true);
-            if (module != null && module.actionsAsset == null)
-                module.AssignDefaultActions();
+            // the GameManager persists across scenes and holds level progress:
+            // reaching the menu means a new run, so it goes and the hub's own
+            // instance takes over at level one with the doors locked again
+            if (GameManager.Instance != null)
+                Destroy(GameManager.Instance.gameObject);
+
+            PP_UiInput.Ensure();   // one owner for mouse and keyboard, always
 
             if (enterButton != null)
                 enterButton.onClick.AddListener(() =>
