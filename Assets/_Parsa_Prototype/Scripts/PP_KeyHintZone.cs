@@ -16,6 +16,8 @@ namespace ParsaProto
         public Vector2 zoneSize = new Vector2(6f, 4f);
         [Tooltip("Stop showing forever once the player swaps while the prompt is visible")]
         public bool hideAfterSwap = true;
+        [Tooltip("Only show once swapping is actually unlocked (Level2+ reached, i.e. more than one form)")]
+        public bool onlyWhenSwapAvailable = false;
 
         [Header("Prompt look")]
         public float heightAbovePlayer = 1.5f;
@@ -56,7 +58,8 @@ namespace ParsaProto
             Vector3 p = _player.transform.position;
             bool inside = Mathf.Abs(p.x - _zoneCenter.x) <= zoneSize.x * 0.5f
                           && Mathf.Abs(p.y - _zoneCenter.y) <= zoneSize.y * 0.5f;
-            bool show = inside && !_used && !PP_DeathHand.AnyPlaying;
+            bool show = inside && !_used && !PP_DeathHand.AnyPlaying
+                        && (!onlyWhenSwapAvailable || SwapUnlocked());
 
             _alpha = Mathf.MoveTowards(_alpha, show ? 1f : 0f,
                 fadeSpeed * Time.deltaTime * 0.25f);
@@ -66,6 +69,18 @@ namespace ParsaProto
             float bob = Mathf.Sin(Time.time * Mathf.PI * 2f / Mathf.Max(0.2f, bobPeriod))
                         * bobAmplitude;
             transform.position = p + new Vector3(0f, heightAbovePlayer + bob, 0f);
+        }
+
+        // same unlock rule as the hub swapper: Level2+ = 2 or more forms
+        bool SwapUnlocked()
+        {
+            var gm = GameManager.Instance;
+            if (gm == null) return true;   // solo scene testing: no cap
+            string lvl = gm.GetLevel();
+            if (lvl != null && lvl.StartsWith("Level")
+                && int.TryParse(lvl.Substring(5), out int n))
+                return n >= 2;
+            return true;   // "End": everything unlocked
         }
 
         void SetAlpha(float a)

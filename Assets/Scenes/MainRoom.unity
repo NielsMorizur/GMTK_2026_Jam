@@ -8995,6 +8995,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zoneSize: {x: 6, y: 4}
   hideAfterSwap: 1
+  onlyWhenSwapAvailable: 1
   heightAbovePlayer: 1.5
   bobAmplitude: 0.12
   bobPeriod: 1.6
