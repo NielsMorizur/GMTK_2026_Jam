@@ -235,7 +235,7 @@ MonoBehaviour:
     pitchJitter: 0.102
   fart:
     variations:
-    - {fileID: 8300000, guid: 681582bbab79c8e4380157c465a5d7ac, type: 3}
+    - {fileID: 8300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60a24, type: 3}
     volume: 0.653
     pitchJitter: 0.14
   grappleAttached:
