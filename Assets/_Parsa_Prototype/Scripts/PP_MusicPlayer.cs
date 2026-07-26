@@ -24,6 +24,11 @@ namespace ParsaProto
         float _baseVolume = 1f;
         Player _watched;
         float _refindTimer;
+        bool _suppressed;
+
+        /// <summary>Scene-local music (the intro's limbo track) can silence
+        /// the stems while it plays; they duck out and resume seamlessly.</summary>
+        public void Suppress(bool on) => _suppressed = on;
 
         void Awake()
         {
@@ -99,7 +104,7 @@ namespace ParsaProto
 
             // menus (no player) keep just the melody; each younger form
             // unmutes its stem, and aging back down mutes them again
-            int audible = _watched != null ? (int)_watched.CurrentAge + 1 : 1;
+            int audible = _suppressed ? 0 : (_watched != null ? (int)_watched.CurrentAge + 1 : 1);
 
             float step = Time.unscaledDeltaTime / Mathf.Max(0.05f, fadeTime);
             for (int i = 0; i < _sources.Length; i++)

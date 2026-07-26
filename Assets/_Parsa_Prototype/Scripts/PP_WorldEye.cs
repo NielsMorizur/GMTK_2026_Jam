@@ -20,6 +20,8 @@ namespace ParsaProto
         [Header("Behavior")]
         [Tooltip("Only notice the player within this range; 0 = the whole scene")]
         public float wakeRange = 0f;
+        [Tooltip("Watch this instead of the player (intro cinematics)")]
+        public Transform overrideTarget;
         [Tooltip("Speed that counts as 'moving'")]
         public float moveThreshold = 0.5f;
         [Tooltip("Seconds of stillness before the eye closes")]
@@ -41,19 +43,35 @@ namespace ParsaProto
             _blinkTimer = Random.Range(blinkIntervalMin, blinkIntervalMax);
         }
 
+        Vector3 _lastTargetPos;
+
+        Transform Target()
+        {
+            if (overrideTarget != null) return overrideTarget;
+            if (_player == null) _player = FindAnyObjectByType<Player>();
+            return _player != null ? _player.transform : null;
+        }
+
         void Update()
         {
-            if (_player == null)
-            {
-                _player = FindAnyObjectByType<Player>();
-                if (_player == null) return;
-            }
+            var watch = Target();
+            if (watch == null) return;
 
             float now = Time.realtimeSinceStartup;
             bool inRange = wakeRange <= 0f
-                || Vector2.Distance(_player.transform.position, transform.position) <= wakeRange;
-            bool moving = _player.rb != null
-                && _player.rb.linearVelocity.magnitude > moveThreshold;
+                || Vector2.Distance(watch.position, transform.position) <= wakeRange;
+            bool moving;
+            if (overrideTarget != null)
+            {
+                moving = (watch.position - _lastTargetPos).magnitude
+                         > moveThreshold * Time.unscaledDeltaTime;
+                _lastTargetPos = watch.position;
+            }
+            else
+            {
+                moving = _player.rb != null
+                    && _player.rb.linearVelocity.magnitude > moveThreshold;
+            }
             if (moving && inRange && !PP_DeathHand.AnyPlaying && !PP_PauseMenu.IsOpen)
                 _lastMoveTime = now;
 
@@ -79,7 +97,7 @@ namespace ParsaProto
             Vector3 target = _irisHome;
             if (open)
             {
-                Vector3 dir = _player.transform.position - transform.position;
+                Vector3 dir = watch.position - transform.position;
                 target = _irisHome + Vector3.ClampMagnitude(dir, maxIrisOffset);
                 target.z = _irisHome.z;
             }
