@@ -335,7 +335,10 @@ public class Player : MonoBehaviour
         if (Stats == null || !Stats.canGrapple) return;
         if (CurrentGrappleTarget == null) return;
 
-        if (input.Player.Jump.WasPerformedThisFrame())
+        // Space, J and left click all grapple when a point is in range;
+        // the dash trigger below sees IsGrappling and stands down
+        if (input.Player.Jump.WasPerformedThisFrame()
+            || input.Player.Dash.WasPerformedThisFrame())
             AttachGrapple(CurrentGrappleTarget);
     }
 

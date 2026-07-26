@@ -47,7 +47,10 @@ namespace ParsaProto
 
         public void PlayClaim(System.Action onDone)
         {
-            if (IsPlaying || hand == null || frames == null || frames.Length == 0)
+            // same rule as the ghost: never reset while a death is on screen
+            if (IsPlaying || AnyPlaying) return;
+
+            if (hand == null || frames == null || frames.Length == 0)
             {
                 onDone?.Invoke();
                 return;

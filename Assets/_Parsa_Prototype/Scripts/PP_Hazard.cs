@@ -13,6 +13,9 @@ namespace ParsaProto
     {
         void OnTriggerEnter2D(Collider2D other)
         {
+            // overlapping hazards can fire on the same frame: one death only
+            if (PP_DeathHand.AnyPlaying) return;
+
             var teamPlayer = other.GetComponentInParent<Player>();
             if (teamPlayer != null)
             {

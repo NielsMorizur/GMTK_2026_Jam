@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
@@ -87,13 +88,31 @@ namespace ParsaProto
             if (controlsBackButton != null)
                 controlsBackButton.onClick.AddListener(() => ShowControls(false));
 
-            // make sure the UI input module has actions to click with
-            var module = GetComponentInChildren<InputSystemUIInputModule>(true);
-            if (module != null && module.actionsAsset == null)
-                module.AssignDefaultActions();
+            ClaimInput();
 
             if (panel != null)
                 panel.SetActive(false);
+        }
+
+        /// <summary>Make this menu's EventSystem the live one and give every
+        /// input module actions. Without both, the mouse does nothing: a
+        /// scene's own EventSystem (or a stale one) silently wins instead.</summary>
+        void ClaimInput()
+        {
+            var modules = FindObjectsByType<InputSystemUIInputModule>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var m in modules)
+                if (m.actionsAsset == null) m.AssignDefaultActions();
+
+            var mine = GetComponentInChildren<EventSystem>(true);
+            if (mine == null) return;
+            if (!mine.gameObject.activeSelf) mine.gameObject.SetActive(true);
+
+            var all = FindObjectsByType<EventSystem>(
+                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            foreach (var es in all)
+                if (es != mine) es.gameObject.SetActive(false);
+            EventSystem.current = mine;
         }
 
         void OnSceneChanged(Scene from, Scene to)
@@ -146,7 +165,12 @@ namespace ParsaProto
             if (kb.escapeKey.wasPressedThisFrame || kb.pKey.wasPressedThisFrame)
             {
                 bool open = !panel.activeSelf;
-                if (open) ShowControls(false);   // always land on the settings page
+                if (open)
+                {
+                    ShowControls(false);   // always land on the settings page
+                    ClaimInput();          // the level may have taken input over
+                    EventSystem.current?.SetSelectedGameObject(null);
+                }
                 panel.SetActive(open);
                 IsOpen = open;
                 Time.timeScale = open ? 0f : 1f;

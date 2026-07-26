@@ -159,7 +159,7 @@ MonoBehaviour:
   maxSwingSpeed: 15
   swingLinearDamping: 0.15
   ropeWidth: 0.08
-  ropeColor: {r: 0.4509804, g: 0.26666668, b: 0.105882354, a: 1}
+  ropeColor: {r: 0.0141509175, g: 0.49048376, b: 1, a: 1}
   allowSwingInput: 1
   limitSwingSpeed: 1
   attachMomentumMode: 2
@@ -619,7 +619,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -522101659
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: e5f6a7b8c9d0e1f2a3b4c5d6e7f80802, type: 3}
@@ -850,7 +850,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -522101659
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: -2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 16e2f7242d3a21b9ce2594cf5c44032c, type: 3}
@@ -943,7 +943,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -522101659
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 20
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 5e346c7a78c00e90ffdb66e799ab5956, type: 3}
@@ -1036,7 +1036,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -522101659
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 80e36b27565b35a468d5e4925e846064, type: 3}

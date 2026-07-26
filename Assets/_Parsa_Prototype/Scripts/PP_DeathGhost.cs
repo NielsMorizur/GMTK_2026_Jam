@@ -44,7 +44,11 @@ namespace ParsaProto
 
         public void PlayGhost(System.Action onDone)
         {
-            if (IsPlaying || ghost == null || frames == null || frames.Length == 0)
+            // a second hazard touching him in the same frame must be ignored
+            // outright: running onDone here would reset the level mid-ghost
+            if (IsPlaying || PP_DeathHand.AnyPlaying) return;
+
+            if (ghost == null || frames == null || frames.Length == 0)
             {
                 onDone?.Invoke();
                 return;
@@ -73,6 +77,13 @@ namespace ParsaProto
             ghost.gameObject.SetActive(true);
             Vector3 basePos = ghost.transform.localPosition;
 
+            // the ghost rises where he died: detached, so a respawn snap
+            // (or anything else moving the player) cannot carry it along
+            Transform parent = ghost.transform.parent;
+            Quaternion baseRot = ghost.transform.localRotation;
+            Vector3 baseScale = ghost.transform.localScale;
+            ghost.transform.SetParent(null, true);
+
             float dt = 1f / Mathf.Max(1f, framesPerSecond);
             for (int i = 0; i < frames.Length; i++)
             {
@@ -96,7 +107,10 @@ namespace ParsaProto
             PP_ScreenFade.Wipe(() =>
             {
                 ghost.gameObject.SetActive(false);
+                ghost.transform.SetParent(parent, false);
                 ghost.transform.localPosition = basePos;
+                ghost.transform.localRotation = baseRot;
+                ghost.transform.localScale = baseScale;
                 SetPlayerVisible(true);
 
                 if (_player != null && _player.input != null)
