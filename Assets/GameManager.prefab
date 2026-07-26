@@ -45,3 +45,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   LevelsCompleted: 0
+  levelSequence:
+  - Level1
+  - Level2
+  - Level3
+  - Level4
+  - ExitRoom
+  currentLevelIndex: 0

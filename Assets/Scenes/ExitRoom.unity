@@ -950,7 +950,6 @@ Transform:
   - {fileID: 6730000002}
   - {fileID: 6730000012}
   - {fileID: 8800000000000000802}
-  - {fileID: 8800000000000000812}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &505087707 stripped
@@ -2981,7 +2980,7 @@ Tilemap:
       - {fileID: 21300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60b16, type: 3}
       - {fileID: 21300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60b17, type: 3}
       - {fileID: 21300000, guid: d3c4d5e6f7a8b9c0d1e2f3a4b5c60b18, type: 3}
-      m_AnimationSpeed: 9
+      m_AnimationSpeed: 9.000001
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: -1, y: -2, z: 0}
@@ -9247,36 +9246,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 6513645713874394900, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70704, type: 3}
   m_PrefabInstance: {fileID: 8800000000000000801}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &8800000000000000811
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 483111851}
-    m_Modifications:
-    - target: {fileID: 5400000000000000002, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70705, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5400000000000000002, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70705, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5400000000000000002, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70705, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 10
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70705, type: 3}
---- !u!4 &8800000000000000812 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5400000000000000002, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e70705, type: 3}
-  m_PrefabInstance: {fileID: 8800000000000000811}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8800000000000000821
 PrefabInstance:

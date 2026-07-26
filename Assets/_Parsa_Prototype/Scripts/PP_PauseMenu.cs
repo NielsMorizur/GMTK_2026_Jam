@@ -21,6 +21,10 @@ namespace ParsaProto
         [Tooltip("The panel ESC / P shows and hides")]
         public GameObject panel;
         public Toggle shakeToggle;
+        public Slider masterSlider;
+        public Slider sfxSlider;
+        public Slider musicSlider;
+        public Button mainMenuButton;
 
         void Awake()
         {
@@ -36,6 +40,33 @@ namespace ParsaProto
             {
                 shakeToggle.SetIsOnWithoutNotify(PP_Settings.ScreenShakeDisabled);
                 shakeToggle.onValueChanged.AddListener(on => PP_Settings.ScreenShakeDisabled = on);
+            }
+
+            // same knobs as the main menu settings, saved live
+            if (masterSlider != null)
+            {
+                masterSlider.SetValueWithoutNotify(PP_Settings.MasterVolume);
+                masterSlider.onValueChanged.AddListener(v => PP_Settings.MasterVolume = v);
+            }
+            if (sfxSlider != null)
+            {
+                sfxSlider.SetValueWithoutNotify(PP_Settings.SfxVolume);
+                sfxSlider.onValueChanged.AddListener(v => PP_Settings.SfxVolume = v);
+            }
+            if (musicSlider != null)
+            {
+                musicSlider.SetValueWithoutNotify(PP_Settings.MusicVolume);
+                musicSlider.onValueChanged.AddListener(v => PP_Settings.MusicVolume = v);
+            }
+            if (mainMenuButton != null)
+            {
+                mainMenuButton.onClick.AddListener(() =>
+                {
+                    Time.timeScale = 1f;
+                    IsOpen = false;
+                    if (panel != null) panel.SetActive(false);
+                    PP_ScreenFade.LoadScene("MainMenu");
+                });
             }
 
             // make sure the UI input module has actions to click with
